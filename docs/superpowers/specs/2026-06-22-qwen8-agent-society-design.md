@@ -197,6 +197,7 @@ Missing any one of these leaves qwen8 silently reading delapan's `config.yaml` a
 - `store/sqlite.py` `_default_db_path()`: `~/.delapan/delapan.db` → `~/.qwen8/qwen8.db`, and its `os.environ.get("DELAPAN_DB_PATH")` → `QWEN8_DB_PATH`.
 - `config.py` `.env` + `config.yaml` path resolution → qwen8's repo root (`Path(__file__).resolve().parents[2]` already points at the package root; verify it lands on the qwen8 repo root, not delapan's).
 - Preserve precedence: defaults < `config.yaml` < env.
+- `Settings` `cors_origins` env alias `CORS_ORIGINS` → `QWEN8_CORS_ORIGINS`, so the deployed frontend/ECS origin is added at `docker run` time (`-e QWEN8_CORS_ORIGINS=…`, Section 9.2) without a code change.
 - **Startup assertion (Risks + M1 verify):** on boot, log the resolved `store.db_path` and `assert ".qwen8" in db_path`; assert `_ENV_PREFIX == "QWEN8_"`. A clean import says nothing about whether the *running process* reads delapan's config — this runtime check does.
 
 ### 5.4 What is dropped
@@ -407,9 +408,9 @@ async def step(self) -> bool:
 
 ### 6.3 Coordination loop + termination
 
-`async def run_society(topic: str, *, org_id: str, project_id: str, kb_id: str, cfg: SocietyConfig, n_researchers: int = 2, max_rounds: int = 3, max_attempts: int = 1, spawn_budget: int = 4) -> SocietyResult`
+`async def run_society(topic: str, *, org_id: str, project_id: str, kb_id: str, cfg: AppConfig, n_researchers: int = 2, max_rounds: int = 3, max_attempts: int = 1, spawn_budget: int = 4, on_event: Callable[[str, dict], Awaitable[None]] | None = None, store=None) -> SocietyResult`
 
-*(Demo defaults: `n_researchers=2, max_rounds=3, max_attempts=1` per the token budget in Section 12. `org_id/project_id/kb_id` are resolved by the bootstrap in Section 6.5 before the loop runs.)*
+*(Demo defaults: `n_researchers=2, max_rounds=3, max_attempts=1` per the token budget in Section 12. `org_id/project_id/kb_id` are resolved by the bootstrap in Section 6.5 before the loop runs.)* **`cfg` is the full `AppConfig`** — roles dereference `cfg.search`/`cfg.tiers`/`cfg.exploration`/`cfg.society`, so passing a bare `SocietyConfig` would `AttributeError`. **`on_event(name, data)`** is the optional hook (guarded `if on_event:`) the role bodies call to emit the eleven §8.2 SSE frames; **`store`** is the API route's already-resolved `SQLiteStore` (when `None`, `run_society` resolves the cached singleton via `QWEN8_DB_PATH` — the route and the loop MUST share one DB file, else the stream and the brain desync).
 
 1. **Seed.** `Planner.seed(topic)` writes initial `open` gaps.
 2. **Round loop.** `asyncio.gather()` over `N` `Researcher.step()` coroutines, each draining gaps until `claim_gap` returns `None`. They self-distribute via the atomic claim. Findings flow back via `insert_findings` + `complete_gap(status='verified')`. (`run_exploration` is IO-bound — the overlap is the in-flight **Tavily/DashScope HTTP awaits** across researchers; the lone shared DB connection and the CPU-bound `FindingMerger` serialize on the one event-loop thread. This is overlapping crawls, *not* multi-process parallelism — do not claim the latter.)
@@ -527,7 +528,7 @@ class SocietyConfig(BaseModel):
     max_llm_calls_per_run: int = 120         # per-run kill-switch (graceful stop)
 ```
 
-Env overrides use the `QWEN8_SOCIETY__<FIELD>` form (e.g. `QWEN8_SOCIETY__N_RESEARCHERS=2`, `QWEN8_SOCIETY__MAX_ROUNDS=3`). The role classes (6.2) read models from `cfg.society.*`; the loop reads `n_researchers`/`max_rounds`/`max_attempts`/`spawn_budget` defaults from here. `max_llm_calls_per_run` is the per-run kill-switch: a shared counter incremented around every role + engine LLM call; when it trips, the loop stops gracefully and the Synthesizer emits a partial report.
+Env overrides use the `QWEN8_SOCIETY__<FIELD>` form (e.g. `QWEN8_SOCIETY__N_RESEARCHERS=2`, `QWEN8_SOCIETY__MAX_ROUNDS=3`). The role classes (6.2) read models from `cfg.society.*`; the loop reads `n_researchers`/`max_rounds`/`max_attempts`/`spawn_budget` defaults from here. `max_llm_calls_per_run` is the per-run kill-switch — and it is a **real monotonic counter, not a round-count proxy**: implemented in `qwen8.core.clients.ai_gateway` as a module-level count with `reset_llm_calls()` / `llm_calls()`, incremented at the top of **both** `structured_completion` and `text_completion` (so it captures the engine's internal extractor/evaluator/planner calls too). `run_society` calls `reset_llm_calls()` at start and tests `llm_calls() >= cfg.society.max_llm_calls_per_run` at round-top and inside the per-researcher drain; on trip the loop stops gracefully and the Synthesizer emits a partial report.
 
 ---
 
@@ -547,10 +548,10 @@ qwen8 reuses the existing prefixed read endpoints and adds **one new SSE endpoin
 **Endpoints (real prefixed paths):**
 - `POST /api/projects/{p}/kbs/{k}/society/start` — body `{topic, n_researchers?, max_rounds?}` → `{kb_id, run_id}`.
 - `GET /api/projects/{p}/kbs/{k}/society/stream?run_id=...` — **SSE**, named-event frames (preferred live mechanism).
-- `GET /api/projects/{p}/kbs/{k}/society/state?run_id=...` — snapshot fallback `{nodes, edges, gaps[status,claimed_by], coverage, contributors, report}`; the frontend diffs snapshots.
+- `GET /api/projects/{p}/kbs/{k}/society/state?run_id=...` — snapshot fallback `{nodes, edges, gaps[status,claimed_by], coverage, contributors, report}`, **reconstructed from the blackboard (gaps + findings)** so it survives a process restart and matches the frame mapping below; the frontend diffs snapshots.
 - Existing read endpoints unchanged: `GET /api/projects/{p}/kbs/{k}/graph`, `/graph/stats`, `/graph/schema`, `/findings`, `/synopsis`, `/resume`, and `GET /api/projects`.
 
-**SSE frame schema (NET-NEW — frozen as a contract artifact at end of M6, per Section 12).** Each frame is `event: <name>\ndata: <json>\n\n`. Node/edge payloads match the `/graph` wire shape (`id/type/label/properties/grounded_in/created_at`; edges add `source/target/relation`); IDs are stable + unique (the graph is `multi`+`directed`).
+**SSE frame schema (NET-NEW — frozen as a contract artifact at end of M6, per Section 12).** Each frame is `event: <name>\ndata: <json>\n\n`. Node/edge payloads match the `/graph` wire shape (`id/type/label/properties/grounded_in/created_at`; edges add `source/target/relation`); IDs are stable + unique (the graph is `multi`+`directed`). **`node_added`/`edge_added` are SYNTHESIZED by `run_society` from the blackboard, not the KG** (KG extraction is OFF for the demo): each gap → a `question` node, each persisted finding → a `finding` node + an `answers` edge to its gap. All eleven frames are emitted from the role bodies through the `on_event` hook (6.3) — so "the graph grows live" is driven by gaps opening and findings landing, which is the on-thesis view of the shared brain.
 
 | `event:` | `data` JSON payload |
 |---|---|
