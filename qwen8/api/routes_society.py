@@ -32,6 +32,7 @@ from pydantic import BaseModel
 from qwen8.api.deps import resolve_kb_or_404
 from qwen8.core.config import get_config, get_settings
 from qwen8.society import run_society
+from qwen8.store.sqlite import SQLiteStore
 
 router = APIRouter(prefix="/api/projects/{project}/kbs/{kb}")
 
@@ -125,9 +126,75 @@ async def society_start(
         return JSONResponse(status_code=500, content={"error": str(exc)})
 
 
+async def replay_events(store, kb_id: str, *, interval: float = 0.6):
+    """Re-emit a completed run's gaps+findings as named SSE frames, no live LLM/Tavily.
+
+    Ordering per gap: gap_opened → gap_claimed → finding_merged* → gap_filled →
+    coverage; then a final report + done. The brain IS the recording. Uses A1's
+    `_sse_named(name, data)` helper (there is NO bare `_sse`)."""
+    from qwen8.society.blackboard import list_gaps
+
+    gaps = list_gaps(store, kb_id)
+    findings_done = 0
+    for g in gaps:
+        yield _sse_named("gap_opened", {
+            "gap_id": g.id, "question": g.question, "parent_id": g.parent_id,
+        })
+        if interval:
+            await asyncio.sleep(interval)
+        yield _sse_named("gap_claimed", {
+            "gap_id": g.id, "claimed_by": g.owner or "researcher-0", "role": "researcher",
+        })
+        if interval:
+            await asyncio.sleep(interval)
+        for fid in (g.finding_ids or []):
+            try:
+                row = store.get_finding(kb_id, fid)
+                title = row.get("title", "")
+            except Exception:  # noqa: BLE001 — a pruned finding id must not break replay
+                title = ""
+            yield _sse_named("finding_merged", {
+                "finding_id": fid, "gap_id": g.id, "title": title,
+                "contributor": g.owner or "researcher-0",
+            })
+            findings_done += 1
+            if interval:
+                await asyncio.sleep(interval)
+        yield _sse_named("gap_filled", {
+            "gap_id": g.id, "coverage": g.coverage or "gap",
+            "finding_ids": list(g.finding_ids or []),
+            "status": "done" if g.status == "done" else "verified",
+        })
+        yield _sse_named("coverage", {
+            "gap_id": g.id, "coverage": g.coverage or "gap",
+            "band1_hits": g.band1_hits, "overall": g.coverage or "gap",
+        })
+        if interval:
+            await asyncio.sleep(interval)
+
+    yield _sse_named("report", {"report": "(replayed from saved run)", "unanswered": []})
+    gaps_done = sum(1 for g in gaps if g.status == "done")
+    gaps_dead = sum(1 for g in gaps if g.status == "dead")
+    yield _sse_named("done", {
+        "run_id": "replay", "rounds": 0, "finding_count": findings_done,
+        "gaps_done": gaps_done, "gaps_dead": gaps_dead,
+    })
+
+
 @router.get("/society/stream")
 async def society_stream(project: str, kb: str, request: Request) -> Any:
     try:
+        # --- NEW (D4): offline replay branch — re-emit a saved run, no live LLM ---
+        if request.query_params.get("replay"):
+            ctx, store = resolve_kb_or_404(project, kb)
+            db = request.query_params.get("db")
+            interval = float(request.query_params.get("interval") or 0.6)
+            replay_store = SQLiteStore(db_path=db) if db else store
+            return StreamingResponse(
+                replay_events(replay_store, ctx.kb_id, interval=interval),
+                media_type="text/event-stream",
+            )
+        # --- existing A1 live path (UNCHANGED): _RUNS lookup + run.queue drain ---
         run_id = request.query_params.get("run_id")
         run = _RUNS.get(run_id or "")
         if run is None:
