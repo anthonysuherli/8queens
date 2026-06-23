@@ -1,0 +1,33 @@
+flowchart TB
+  browser["Browser / judge<br/>(sigma.js dashboard)"]
+  subgraph cloud["Alibaba Cloud — Singapore (ap-southeast-1)"]
+    subgraph ecs["ECS instance"]
+      subgraph api["qwen8 FastAPI / uvicorn (:8001, host 0.0.0.0)"]
+        routes["POST /api/projects/{p}/kbs/{k}/society/start<br/>GET  /…/society/stream (SSE)<br/>GET  /…/society/state<br/>GET  /…/graph · /…/findings · /…/resume<br/>GET  /api/projects · GET /health"]
+      end
+      subgraph loop["BLACKBOARD LOOP (run_society)"]
+        planner["Planner — seed gaps(open)"]
+        researcher["Researcher ×N — claim (atomic)<br/>run_exploration + embed + insert"]
+        critic["Critic — re-band: done | reopen(reason)"]
+        synth["Synthesizer — when no open/claimed/verified gaps"]
+        planner --> researcher --> critic --> synth
+        critic -- "reopen / spawn child" --> planner
+      end
+      subgraph brain["SHARED BRAIN (Store seam)"]
+        findings["findings + vec_findings (dedup, 1536-dim)"]
+        kg["kg_nodes / kg_edges / kg_schemas (incremental KG)"]
+        meta["kb_synopsis · explorations · gaps (NEW table)"]
+        db["SQLite + sqlite-vec → /data/qwen8.db"]
+        findings --- db
+        kg --- db
+        meta --- db
+      end
+      routes --> loop
+      loop -->|read/write| brain
+    end
+    dashscope["DashScope (Model Studio)<br/>dashscope-intl.aliyuncs.com<br/>qwen-max/plus/long + text-embedding-v4@1536"]
+  end
+  tavily["Tavily API (3rd party)<br/>search + extract"]
+  browser <-->|HTTP + SSE| routes
+  loop -->|outbound HTTPS| dashscope
+  loop -->|outbound HTTPS| tavily
