@@ -236,7 +236,7 @@ def render_kg_context(digest: dict) -> str:
     a single "not built yet" line when the KG is empty."""
     n, m = digest.get("node_count", 0), digest.get("edge_count", 0)
     if not n:
-        return "Knowledge graph: not built yet — run `delapan_build_graph` to populate it."
+        return "Knowledge graph: not built yet."
 
     lines = [f"Knowledge graph: {n} entities, {m} relations."]
     ents = digest.get("top_entities") or []

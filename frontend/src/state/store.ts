@@ -66,7 +66,7 @@ export type FindingCacheEntry =
   | { status: "error"; message: string }
   | { status: "ready"; data: Finding };
 
-const SCOPE_KEY = "delapan.scope";
+const SCOPE_KEY = "qwen8.scope";
 
 interface AppState {
   mode: api.ApiMode;
@@ -578,7 +578,9 @@ function applySocietyEvent(
       break;
     }
     case "coverage":
-      if (e.gap_id === null) patch({ overall: e.overall });
+      // Always update the overall meter from e.overall (always present in the payload).
+      // Per-gap updates (gap_id != null) also carry an overall reading from the backend.
+      patch({ overall: e.overall });
       break;
     case "node_added":
       if (!graph.hasNode(e.id)) {

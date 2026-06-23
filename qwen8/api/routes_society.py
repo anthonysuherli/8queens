@@ -32,7 +32,6 @@ from pydantic import BaseModel
 from qwen8.api.deps import resolve_kb_or_404
 from qwen8.core.config import get_config, get_settings
 from qwen8.society import run_society
-from qwen8.store.sqlite import SQLiteStore
 
 router = APIRouter(prefix="/api/projects/{project}/kbs/{kb}")
 
@@ -187,11 +186,9 @@ async def society_stream(project: str, kb: str, request: Request) -> Any:
         # --- NEW (D4): offline replay branch — re-emit a saved run, no live LLM ---
         if request.query_params.get("replay"):
             ctx, store = resolve_kb_or_404(project, kb)
-            db = request.query_params.get("db")
             interval = float(request.query_params.get("interval") or 0.6)
-            replay_store = SQLiteStore(db_path=db) if db else store
             return StreamingResponse(
-                replay_events(replay_store, ctx.kb_id, interval=interval),
+                replay_events(store, ctx.kb_id, interval=interval),
                 media_type="text/event-stream",
             )
         # --- existing A1 live path (UNCHANGED): _RUNS lookup + run.queue drain ---

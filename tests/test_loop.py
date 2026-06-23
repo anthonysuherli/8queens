@@ -404,3 +404,99 @@ async def test_society_result_fields(monkeypatch):
     assert hasattr(res, "finding_count")
     assert res.topic == "fields topic"
     assert res.kb_id == "kb6"
+
+
+# ---------------------------------------------------------------------------
+# (h) Researcher fault isolation — one researcher raising does not abort the run
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_one_researcher_failure_is_non_fatal(monkeypatch):
+    """A transient exception in one researcher must not abort the round or the run.
+
+    Scenario: 2 researchers, 2 gaps. The first researcher always raises on step();
+    the second researcher works normally. The run must complete (return a
+    SocietyResult), emit at least one non-fatal error frame, and leave the gaps
+    reachable by the Synthesizer.
+    """
+    store, _path = _make_store(monkeypatch)
+    emitted: list[tuple[str, dict]] = []
+
+    async def capture(name: str, data: dict) -> None:
+        emitted.append((name, data))
+
+    class BrokenResearcher:
+        """Always raises after claiming a gap — simulates a 429/network error."""
+
+        def __init__(self, store, *, org_id, project_id, kb_id, cfg, researcher_id, on_event=None):
+            self.store = store
+            self.kb_id = kb_id
+            self.rid = researcher_id
+            self.researcher_id = researcher_id
+
+        async def step(self):
+            from qwen8.society.blackboard import claim_gap
+            g = claim_gap(self.store, self.kb_id, owner=self.rid)
+            if g is None:
+                return False
+            raise RuntimeError("simulated 429 / network error")
+
+    # r1 = broken, r2 = working. We need n_researchers=2 so _drain runs both.
+    call_count = {"r2_steps": 0}
+
+    class WorkingResearcher:
+        def __init__(self, store, *, org_id, project_id, kb_id, cfg, researcher_id, on_event=None):
+            self.store = store
+            self.kb_id = kb_id
+            self.rid = researcher_id
+
+        async def step(self):
+            from qwen8.society.blackboard import claim_gap, complete_gap
+            g = claim_gap(self.store, self.kb_id, owner=self.rid)
+            if g is None:
+                return False
+            complete_gap(self.store, g.id, ["f1"], coverage="rich", band1_hits=3,
+                         status="verified")
+            call_count["r2_steps"] += 1
+            return True
+
+    # Alternate which class is instantiated based on researcher_id.
+    class SelectiveResearcher:
+        def __new__(cls, store, *, org_id, project_id, kb_id, cfg, researcher_id, on_event=None):
+            if researcher_id == "r1":
+                return BrokenResearcher(store, org_id=org_id, project_id=project_id,
+                                        kb_id=kb_id, cfg=cfg, researcher_id=researcher_id,
+                                        on_event=on_event)
+            return WorkingResearcher(store, org_id=org_id, project_id=project_id,
+                                     kb_id=kb_id, cfg=cfg, researcher_id=researcher_id,
+                                     on_event=on_event)
+
+    monkeypatch.setattr(loop_mod, "Planner", FakePlanner)
+    monkeypatch.setattr(loop_mod, "Researcher", SelectiveResearcher)
+    monkeypatch.setattr(loop_mod, "Critic", FakeCritic)
+    monkeypatch.setattr(loop_mod, "Synthesizer", FakeSynth)
+
+    # Must not raise despite one researcher always failing.
+    res = await loop_mod.run_society(
+        "fault isolation topic",
+        org_id="local",
+        project_id="proj7",
+        kb_id="kb7",
+        cfg=get_config(),
+        n_researchers=2,
+        max_rounds=3,
+        store=store,
+        on_event=capture,
+    )
+
+    assert isinstance(res, loop_mod.SocietyResult), "run_society must return a result"
+    assert res.topic == "fault isolation topic"
+
+    # A non-fatal error frame must have been emitted for the broken researcher.
+    error_frames = [(n, d) for n, d in emitted if n == "error" and not d.get("fatal", True)]
+    assert error_frames, "expected at least one non-fatal error frame from the broken researcher"
+
+    # The working researcher must have made progress (gaps completed by it or Critic).
+    done_gaps = [g for g in res.gaps if g.status == "done"]
+    assert done_gaps, "at least one gap should have been completed by the working researcher"

@@ -131,9 +131,15 @@ async def run_society(
 
             async def _drain(r: Researcher) -> None:
                 # Each researcher drains gaps until claim returns None; stop early
-                # if the kill-switch trips mid-round.
-                while not _over_budget() and await r.step():
-                    pass
+                # if the kill-switch trips mid-round. A transient exception in one
+                # researcher is non-fatal: emit an error frame and stop this
+                # researcher while the others continue.
+                try:
+                    while not _over_budget() and await r.step():
+                        pass
+                except Exception as exc:  # noqa: BLE001 — peer failure is non-fatal
+                    rid = getattr(r, "researcher_id", "unknown")
+                    await _emit("error", {"error": f"researcher {rid}: {exc}", "fatal": False})
 
             await asyncio.gather(*[_drain(r) for r in researchers])
 
