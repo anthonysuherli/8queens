@@ -77,7 +77,8 @@ async def resume(
     depth: Literal["shallow", "normal", "deep"] = "normal",
 ) -> JSONResponse:
     ctx, store = resolve_kb_or_404(project, kb)
-    if query and not get_settings().openai_api_key:
+    s = get_settings()
+    if query and not (s.ai_gateway_api_key or s.openai_api_key):
         return JSONResponse(status_code=503, content={"error": "embeddings unavailable"})
     preamble, coverage = await select_preamble(
         query or None, store=store, kb_id=ctx.kb_id, depth=depth

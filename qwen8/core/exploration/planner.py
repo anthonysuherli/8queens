@@ -79,4 +79,5 @@ async def plan_queries(
         user=prompt,
         temperature=cfg.temperature,
         reasoning_effort=cfg.reasoning_effort,
+        use_json_schema=False,
     )

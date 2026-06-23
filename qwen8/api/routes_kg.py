@@ -111,7 +111,8 @@ class NodePatch(BaseModel):
 async def post_nodes(project: str, kb: str, body: NodesBody) -> dict:
     ctx, store = resolve_kb_or_404(project, kb)
     embeddings: list[list[float]] | None = None
-    if get_settings().openai_api_key:
+    _s = get_settings()
+    if _s.ai_gateway_api_key or _s.openai_api_key:
         try:
             embeddings = await embed_batch([n.label for n in body.nodes])
         except Exception:  # noqa: BLE001 — embeddings are best-effort; never 500

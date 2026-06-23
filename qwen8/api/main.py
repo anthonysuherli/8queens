@@ -23,7 +23,22 @@ from qwen8.api.routes_explore import router as explore_router
 from qwen8.api.routes_findings import router as findings_router
 from qwen8.api.routes_kg import router as kg_router
 from qwen8.api.routes_projects import router as projects_router
-from qwen8.core.config import get_settings
+from qwen8.core.config import _ENV_PREFIX, get_settings
+from qwen8.store import get_store
+
+
+def _assert_startup_invariants() -> None:
+    """Fail fast + loud on a mis-wired process (Section 5.3 / 7.3 / criterion 10)."""
+    assert _ENV_PREFIX == "QWEN8_", f"env prefix not renamed: {_ENV_PREFIX!r}"
+    s = get_settings()
+    assert s.tavily_api_key, "TAVILY_API_KEY is required (search_mode=tavily)"
+    # Resolve the running store and prove it is the qwen8 brain, not delapan's.
+    store = get_store(None, org_id="local")
+    db_path = str(getattr(store, "db_path", ""))
+    assert ".qwen8" in db_path, f"store db_path not the qwen8 brain: {db_path!r}"
+
+
+_assert_startup_invariants()
 
 # The KG control panel's dev origins, always allowed alongside CORS_ORIGINS.
 _FRONTEND_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173")
