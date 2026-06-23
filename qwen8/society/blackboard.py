@@ -141,8 +141,7 @@ def claim_gap(store, kb_id: str, owner: str) -> Gap | None:
         return None
     store._conn.commit()
     r = store._conn.execute(
-        "SELECT * FROM gaps WHERE kb_id=? AND owner=? AND status='claimed' "
-        "ORDER BY updated_at DESC LIMIT 1;",
+        "SELECT * FROM gaps WHERE id=(SELECT id FROM gaps WHERE kb_id=? AND owner=? AND status='claimed' ORDER BY updated_at DESC LIMIT 1)",
         (kb_id, owner),
     ).fetchone()
     return _row_to_gap(r) if r is not None else None
