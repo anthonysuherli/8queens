@@ -1,0 +1,242 @@
+/* three-region control panel shell */
+
+.shell {
+  display: grid;
+  grid-template-rows: var(--topbar-h) 1fr var(--statusbar-h);
+  height: 100vh;
+}
+
+.shell-main {
+  display: grid;
+  grid-template-columns: var(--rail-w) 1fr var(--inspector-w);
+  min-height: 0;
+}
+
+/* --- top bar -------------------------------------------------------------- */
+
+.tb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: linear-gradient(180deg, var(--bg2), var(--bg1));
+  border-bottom: 1px solid var(--line);
+}
+
+.tb-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-right: 4px;
+  user-select: none;
+}
+
+.tb-wordmark {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+.tb-wordmark .tb-eight {
+  color: var(--accent);
+}
+
+.tb-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.tb-search {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.tb-search .inp {
+  padding-left: 26px;
+  background: var(--bg0);
+}
+
+.tb-search-icon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.tb-search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: var(--bg2);
+  border: 1px solid var(--line-bright);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.tb-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.tb-search-row:hover,
+.tb-search-row--hot {
+  background: var(--bg3);
+}
+
+.tb-search-row .tb-search-type {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+
+.tb-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tb-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+  margin: 0 4px;
+}
+
+/* --- status bar ------------------------------------------------------------ */
+
+.sb {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  background: var(--bg1);
+  border-top: 1px solid var(--line);
+}
+
+.sb-conn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+
+.sb-dot--mock {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: blink 2.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.sb-mock-badge {
+  padding: 0 6px;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  background: var(--accent-dim);
+}
+
+.sb-action {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-faint);
+}
+
+.sb-action b {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.sb-history {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sb-history .btn {
+  padding: 1px 7px;
+  font-size: 10px;
+}
+
+/* --- boot splash ------------------------------------------------------------ */
+
+.boot {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.boot-wordmark {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--text);
+}
+
+.boot-wordmark span {
+  color: var(--accent);
+}
+
+.boot-line {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+.boot-err {
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  max-width: 480px;
+  text-align: center;
+}

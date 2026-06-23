@@ -1,0 +1,42 @@
+/* delapan control panel — design tokens
+   instrument-panel: graphite glass, hairline rules, amber annunciators */
+
+:root {
+  /* type */
+  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+
+  /* surfaces */
+  --bg0: #07090d;
+  --bg1: #0b0f15;
+  --bg2: #10151d;
+  --bg3: #151c26;
+  --line: #1b2533;
+  --line-bright: #2b3b52;
+
+  /* ink */
+  --text: #c9d6e3;
+  --text-dim: #7b8ca0;
+  --text-faint: #4d5d70;
+
+  /* annunciators */
+  --accent: #f5a83c;
+  --accent-bright: #ffc36a;
+  --accent-dim: rgba(245, 168, 60, 0.13);
+  --green: #46d39a;
+  --red: #ef5b66;
+  --cyan: #58c4f6;
+
+  /* coverage verdicts */
+  --rich: #46d39a;
+  --sparse: #f5a83c;
+  --gap: #ef5b66;
+
+  /* geometry */
+  --rail-w: 268px;
+  --inspector-w: 336px;
+  --topbar-h: 48px;
+  --statusbar-h: 28px;
+  --radius: 4px;
+}

@@ -1,0 +1,393 @@
+/* center canvas region: sigma stage, viewfinder chrome, overlays, travel HUD */
+
+.cv {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at center, rgba(28, 38, 54, 0.25), transparent 70%),
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(43, 59, 82, 0.12) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, rgba(43, 59, 82, 0.12) 39px 40px),
+    var(--bg0);
+}
+
+.cv-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.cv--connecting {
+  cursor: crosshair;
+}
+
+/* viewfinder corner brackets */
+
+.cv-frame {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--line-bright);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.8;
+}
+
+.cv-frame--tl {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+.cv-frame--tr {
+  top: 8px;
+  right: 8px;
+  border-left: none;
+  border-bottom: none;
+}
+.cv-frame--bl {
+  bottom: 8px;
+  left: 8px;
+  border-right: none;
+  border-top: none;
+}
+.cv-frame--br {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
+}
+
+.cv--travel .cv-frame {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(245, 168, 60, 0.3);
+}
+
+/* vignette while traveling — the ego bubble feel */
+.cv-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 400ms;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(4, 6, 9, 0.5) 100%);
+}
+
+.cv--travel .cv-vignette {
+  opacity: 1;
+}
+
+.cv-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(7, 9, 13, 0.7);
+}
+
+.cv-hint {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: rgba(11, 15, 21, 0.92);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  box-shadow: 0 0 16px rgba(245, 168, 60, 0.2);
+  white-space: nowrap;
+}
+
+/* --- DOM overlays positioned via sigma coordinate conversion ------------------ */
+
+.cv-overlays {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* selection reticle */
+
+.reticle {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.reticle::before,
+.reticle::after,
+.reticle i::before,
+.reticle i::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-color: var(--accent);
+  border-style: solid;
+  border-width: 0;
+}
+
+.reticle::before {
+  top: 0;
+  left: 0;
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+}
+.reticle::after {
+  top: 0;
+  right: 0;
+  border-top-width: 1.5px;
+  border-right-width: 1.5px;
+}
+.reticle i::before {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1.5px;
+  border-left-width: 1.5px;
+}
+.reticle i::after {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1.5px;
+  border-right-width: 1.5px;
+}
+
+.reticle i {
+  position: absolute;
+  inset: 0;
+}
+
+/* travel avatar — the glowing puck */
+
+.avatar {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe2b0, var(--accent) 60%, #b96f12);
+  border: 1.5px solid #ffd9a0;
+  animation: pulse-glow 1.6s ease-in-out infinite;
+  z-index: 12;
+}
+
+.avatar::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 1px solid rgba(245, 168, 60, 0.5);
+  border-radius: 50%;
+  animation: avatar-ring 1.6s ease-in-out infinite;
+}
+
+@keyframes avatar-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.25;
+  }
+}
+
+/* neighbor hotkey badges */
+
+.hopkey {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--bg0);
+  background: var(--text-dim);
+  border: 1px solid var(--bg0);
+  border-radius: 4px;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: background 100ms, transform 100ms;
+  z-index: 11;
+}
+
+.hopkey:hover {
+  background: var(--accent-bright);
+  transform: translate(-50%, -50%) scale(1.18);
+}
+
+.hopkey--aim {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(245, 168, 60, 0.6);
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+/* relation popover (edge drawing) */
+
+.relpop {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 14px));
+  z-index: 40;
+  width: 230px;
+  padding: 10px;
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 18px rgba(245, 168, 60, 0.12);
+  pointer-events: auto;
+  animation: modal-in 140ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.relpop::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--bg2);
+  border-right: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+
+.relpop-title {
+  margin-bottom: 7px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.relpop-title b {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.relpop-form {
+  display: flex;
+  gap: 5px;
+}
+
+/* --- travel HUD (journey log) --------------------------------------------------- */
+
+.hud {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 20;
+  width: 230px;
+  background: rgba(11, 15, 21, 0.94);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  box-shadow: 0 0 24px rgba(245, 168, 60, 0.12);
+  overflow: hidden;
+  animation: toast-in 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.hud-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: var(--accent-dim);
+  border-bottom: 1px solid rgba(245, 168, 60, 0.3);
+}
+
+.hud-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hud-counter {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-progress {
+  height: 3px;
+  background: var(--bg3);
+}
+
+.hud-progress i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+  transition: width 300ms ease;
+}
+
+.hud-trail {
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.hud-stop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: left;
+}
+
+.hud-stop:hover {
+  color: var(--text);
+  background: var(--bg3);
+}
+
+.hud-stop--here {
+  color: var(--accent-bright);
+}
+
+.hud-stop-n {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  width: 18px;
+  flex: none;
+  text-align: right;
+}
+
+.hud-stop-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hud-foot {
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  border-top: 1px solid var(--line);
+}
