@@ -32,3 +32,4 @@ line-length = 100
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = ["live: hits real DashScope+Tavily (run by hand)"]
