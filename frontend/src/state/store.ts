@@ -7,15 +7,21 @@
 
 import { create } from "zustand";
 import * as api from "../api/client";
+import { startSociety, streamSociety } from "../api/society";
 import type {
+  Coverage,
   Finding,
   GraphSchema,
   GraphStats,
   ProjectInfo,
+  SocietyEvent,
   Synopsis,
 } from "../api/types";
 import { buildGraph } from "../graph/build";
-import { graph, onGraphTouched } from "../graph/graphStore";
+import { EDGE_COLOR } from "../graph/colors";
+import { contributorColor } from "../graph/contributors";
+import { graph, graphTouched, onGraphTouched, refreshNodeSizes } from "../graph/graphStore";
+import { placeNear } from "../graph/layout";
 import { clearAliases } from "./commands";
 import { undoManager, type Command } from "./undo";
 
@@ -24,6 +30,26 @@ export interface Toast {
   kind: "info" | "error" | "success";
   text: string;
   undoable?: boolean;
+}
+
+export interface SocietyGapView {
+  question: string;
+  status: "open" | "claimed" | "verified" | "done";
+  claimedBy: string | null;
+  coverage: Coverage | null;
+}
+
+export interface SocietyState {
+  running: boolean;
+  runId: string | null;
+  phase: string;
+  round: number;
+  overall: Coverage | null;
+  gaps: Record<string, SocietyGapView>;
+  contributors: string[];
+  report: string | null;
+  unanswered: string[];
+  findingCount: number;
 }
 
 export interface TravelState {
@@ -71,6 +97,7 @@ interface AppState {
   toasts: Toast[];
   travel: TravelState | null;
   flyTo: { nodeId: string; at: number } | null;
+  society: SocietyState | null;
 
   boot(): Promise<void>;
   setScope(project: string, kb: string): Promise<void>;
@@ -101,6 +128,7 @@ interface AppState {
   teleport(nodeId: string): void;
   setNeighborIndex(index: number): void;
   setLastAction(text: string): void;
+  runSociety(topic: string, opts?: { n_researchers?: number; max_rounds?: number }): Promise<void>;
 }
 
 let toastSeq = 0;
@@ -148,6 +176,7 @@ export const useStore = create<AppState>((set, get) => ({
   toasts: [],
   travel: null,
   flyTo: null,
+  society: null,
 
   async boot() {
     set({ booting: true, bootError: null });
@@ -488,7 +517,109 @@ export const useStore = create<AppState>((set, get) => ({
   setLastAction(text) {
     set({ lastAction: text });
   },
+
+  async runSociety(topic, opts = {}) {
+    const { project, kb } = get();
+    if (!project || !kb) return;
+    set({
+      society: {
+        running: true, runId: null, phase: "starting", round: 0, overall: null,
+        gaps: {}, contributors: [], report: null, unanswered: [], findingCount: 0,
+      },
+    });
+    const patchSociety = (p: Partial<SocietyState>) => {
+      const cur = get().society;
+      if (cur) set({ society: { ...cur, ...p } });
+    };
+    try {
+      const { run_id } = await startSociety(project, kb, { topic, ...opts });
+      patchSociety({ runId: run_id });
+      for await (const e of streamSociety(project, kb, run_id)) {
+        applySocietyEvent(e, get, patchSociety);
+      }
+    } catch (err) {
+      get().pushToast("error", `society run failed: ${err instanceof Error ? err.message : err}`);
+    } finally {
+      const cur = get().society;
+      if (cur) set({ society: { ...cur, running: false } });
+    }
+  },
 }));
+
+// ---------------------------------------------------------------------------
+// society event applicator
+
+function applySocietyEvent(
+  e: SocietyEvent,
+  get: () => AppState,
+  patch: (p: Partial<SocietyState>) => void,
+): void {
+  const soc = get().society;
+  if (!soc) return;
+  switch (e.event) {
+    case "phase":
+      patch({ phase: e.phase, round: e.round });
+      break;
+    case "gap_opened":
+      patch({ gaps: { ...soc.gaps, [e.gap_id]: { question: e.question, status: "open", claimedBy: null, coverage: null } } });
+      break;
+    case "gap_claimed": {
+      const g = soc.gaps[e.gap_id];
+      const contributors = soc.contributors.includes(e.claimed_by) ? soc.contributors : [...soc.contributors, e.claimed_by];
+      patch({
+        contributors,
+        gaps: { ...soc.gaps, [e.gap_id]: { ...(g ?? { question: e.gap_id, coverage: null }), status: "claimed", claimedBy: e.claimed_by } },
+      });
+      break;
+    }
+    case "gap_filled": {
+      const g = soc.gaps[e.gap_id];
+      patch({ gaps: { ...soc.gaps, [e.gap_id]: { ...(g ?? { question: e.gap_id, claimedBy: null }), status: e.status, coverage: e.coverage } } });
+      break;
+    }
+    case "coverage":
+      if (e.gap_id === null) patch({ overall: e.overall });
+      break;
+    case "node_added":
+      if (!graph.hasNode(e.id)) {
+        graph.addNode(e.id, {
+          label: e.label, nodeType: e.type, properties: e.properties ?? {},
+          grounded_in: e.grounded_in ?? [], created_at: e.created_at,
+          x: NaN, y: NaN, size: 4,
+          color: contributorColor(e.contributor),
+        });
+        const anchor = graph.nodes().find((id) => id !== e.id) ?? null;
+        const { x, y } = placeNear(anchor);
+        graph.setNodeAttribute(e.id, "x", x);
+        graph.setNodeAttribute(e.id, "y", y);
+        refreshNodeSizes();
+        graphTouched();
+      }
+      break;
+    case "edge_added":
+      if (graph.hasNode(e.source) && graph.hasNode(e.target) && !graph.hasEdge(e.id)) {
+        graph.addEdgeWithKey(e.id, e.source, e.target, {
+          label: e.relation, relation: e.relation, properties: e.properties ?? {},
+          grounded_in: e.grounded_in ?? [], created_at: e.created_at, size: 1.4, color: EDGE_COLOR,
+        });
+        refreshNodeSizes();
+        graphTouched();
+      }
+      break;
+    case "finding_merged":
+      patch({ findingCount: soc.findingCount + 1 });
+      break;
+    case "report":
+      patch({ report: e.report, unanswered: e.unanswered });
+      break;
+    case "done":
+      patch({ findingCount: e.finding_count, round: e.rounds });
+      break;
+    case "error":
+      get().pushToast("error", `society: ${e.error}`);
+      break;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // wiring: graph mutations → version bump; undo stack → flags; api mode → badge

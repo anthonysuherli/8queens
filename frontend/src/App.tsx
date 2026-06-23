@@ -9,6 +9,8 @@ import { ConceptDocReader } from "./panels/ConceptDocReader";
 import { FindingDrawer } from "./panels/FindingDrawer";
 import { Inspector } from "./panels/Inspector";
 import { LeftRail } from "./panels/LeftRail";
+import { ReportOverlay } from "./panels/ReportOverlay";
+import { SocietyPanel } from "./panels/SocietyPanel";
 import { StatusBar } from "./panels/StatusBar";
 import { Toasts } from "./panels/Toasts";
 import { TopBar } from "./panels/TopBar";
@@ -57,6 +59,7 @@ export default function App() {
       <div className="shell-main">
         <LeftRail />
         <div style={{ position: "relative", minWidth: 0 }}>
+          <SocietyPanel />
           <GraphCanvas />
           {travel && <TravelHud />}
         </div>
@@ -65,6 +68,7 @@ export default function App() {
       <StatusBar />
       <FindingDrawer />
       <ConceptDocReader />
+      <ReportOverlay />
       <AddNodeModal />
       <Toasts />
     </div>
