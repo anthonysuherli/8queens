@@ -25,6 +25,7 @@ import {
   type NodeSpec,
   type ProjectsResponse,
   type ResumeResponse,
+  type SocietyEvent,
   type Synopsis,
 } from "./types";
 
@@ -893,5 +894,59 @@ export const mockApi = {
     };
     data.findings.set(id, created);
     yield { phase: "completed", finding_ids: [id], count: 1 };
+  },
+
+  async startSociety(
+    _project: string,
+    _kb: string,
+    _body: { topic: string; n_researchers?: number; max_rounds?: number },
+  ): Promise<{ kb_id: string; run_id: string }> {
+    return { kb_id: "kb_rag", run_id: "mock-run" };
+  },
+
+  async *streamSociety(
+    _project: string,
+    _kb: string,
+    _runId: string,
+  ): AsyncGenerator<SocietyEvent> {
+    const emit = async (e: SocietyEvent, ms = 450): Promise<SocietyEvent> => {
+      await sleep(ms);
+      return e;
+    };
+    yield await emit({ event: "phase", phase: "seeding", round: 0 }, 200);
+    yield await emit({ event: "gap_opened", gap_id: "g1", question: "What is the regulatory landscape?", parent_id: null });
+    yield await emit({ event: "gap_opened", gap_id: "g2", question: "Who are the major issuers?", parent_id: null });
+    yield await emit({ event: "phase", phase: "researching", round: 1 });
+    yield await emit({ event: "gap_claimed", gap_id: "g1", claimed_by: "r0", role: "researcher" });
+    yield await emit({ event: "gap_claimed", gap_id: "g2", claimed_by: "r1", role: "researcher" });
+    yield await emit({
+      event: "node_added", id: "m_reg", type: "concept", label: "Regulatory framework",
+      properties: { jurisdiction: "EU/US" }, grounded_in: ["mf_1"], created_at: new Date().toISOString(),
+      contributor: "r0", role: "researcher",
+    });
+    yield await emit({ event: "finding_merged", finding_id: "mf_1", gap_id: "g1", title: "MiCA sets stablecoin reserve rules", contributor: "r0" });
+    yield await emit({
+      event: "node_added", id: "m_issuer", type: "company", label: "Circle",
+      properties: {}, grounded_in: ["mf_2"], created_at: new Date().toISOString(),
+      contributor: "r1", role: "researcher",
+    });
+    yield await emit({ event: "finding_merged", finding_id: "mf_2", gap_id: "g2", title: "Circle issues USDC under NYDFS oversight", contributor: "r1" });
+    yield await emit({
+      event: "edge_added", id: "me_1", source: "m_issuer", target: "m_reg", relation: "complies with",
+      properties: {}, grounded_in: ["mf_1", "mf_2"], created_at: new Date().toISOString(),
+    });
+    yield await emit({ event: "coverage", gap_id: "g1", coverage: "sparse", band1_hits: 1, overall: "sparse" });
+    yield await emit({ event: "gap_filled", gap_id: "g1", coverage: "sparse", finding_ids: ["mf_1"], status: "verified" });
+    yield await emit({ event: "gap_filled", gap_id: "g2", coverage: "rich", finding_ids: ["mf_2"], status: "verified" });
+    yield await emit({ event: "phase", phase: "critiquing", round: 1 });
+    yield await emit({ event: "gap_filled", gap_id: "g2", coverage: "rich", finding_ids: ["mf_2"], status: "done" });
+    yield await emit({ event: "coverage", gap_id: null, coverage: "rich", band1_hits: 2, overall: "rich" });
+    yield await emit({ event: "phase", phase: "synthesizing", round: 1 });
+    yield await emit({
+      event: "report",
+      report: "## Stablecoin landscape 2026\n\nMajor issuers operate under emerging frameworks (finding_id: mf_1). Circle issues USDC under NYDFS oversight (finding_id: mf_2).\n",
+      unanswered: ["Long-tail offshore issuers remain under-covered"],
+    });
+    yield await emit({ event: "done", run_id: "mock-run", rounds: 1, finding_count: 2, gaps_done: 1, gaps_dead: 0 }, 200);
   },
 };
