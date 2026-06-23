@@ -1,0 +1,149 @@
+# =============================================================================
+# Qwen8 — tunable runtime config
+#
+# Human-editable knobs for the agent, search/retrieval, and the research
+# pipeline. These are NOT secrets — API keys (and, in the cloud build, Supabase
+# URLs and the JWT secret) live in .env.
+#
+# Precedence (lowest → highest):
+#     built-in defaults  <  this file  <  environment variables
+#
+# Override any value at deploy time with QWEN8_<SECTION>__<FIELD>, e.g.
+#     QWEN8_AGENT__TEMPERATURE=0.4
+#     QWEN8_SEARCH__MIN_SIMILARITY=0.2
+#
+# Point at a different file with QWEN8_CONFIG_FILE=/path/to/config.yaml.
+# Every value below is optional; delete a key to fall back to its default.
+# =============================================================================
+
+# Chat agent + ReAct loop.
+agent:
+  model: qwen-plus                   # primary chat model
+  fast_model: qwen-flash             # reserved for cheap/fast subtasks
+  temperature: 0.2
+  max_tokens: 4096                   # per-turn output cap
+  thinking_budget: 0                 # extended-thinking budget tokens; 0 disables
+  max_tool_iterations: 4             # max ReAct tool-call rounds per turn
+  max_messages_per_turn: 40          # history window fed to the model
+
+# `explore` recall + shared retrieval thresholds.
+search:
+  default_limit: 10
+  max_limit: 50
+  min_similarity: 0.0
+  max_finding_chunks: 25
+
+# Tier model: similarity bands + always-on preamble budget.
+tiers:
+  band1_min: 0.55
+  band2_min: 0.40
+  band3_min: 0.25
+  rich_hit_count: 3
+  preamble_char_budget: 7000
+
+# Per-KB synopsis spine (always-on preamble's stable layer).
+synopsis:
+  model: qwen-flash
+  rebuild_delta: 15
+  rebuild_max_age_hours: 168
+  max_entries: 6
+
+# Cross-KB user-profile super-entity (the always-on "who is this user" layer).
+user_profile:
+  enabled: false
+  inject_in_chat: true
+  inject_in_mcp: true
+  preamble_char_budget: 2000
+  relevance_top_n: 5
+  relevance_sim_weight: 0.6
+  relevance_activity_weight: 0.4
+  activity_window_days: 30
+
+# `explore` tool (web research pipeline). Models are bare Qwen names (no
+# provider/ prefix) routed through DashScope/Qwen API.
+exploration:
+  planner_model: qwen-flash
+  extraction_model: qwen-plus
+  extraction_fallback_model: qwen-flash
+  evaluation_model: qwen-plus
+  temperature: 0.0
+  reasoning_effort: null              # null — thinking mode breaks json_object
+  search_mode: tavily                 # tavily | agent | auto
+  search_depth: advanced
+  max_results_per_query: 20
+  fallback_result_threshold: 5
+  expansion_result_threshold: 3
+  max_pages: 15
+  max_concurrent_extractions: 10
+  max_content_per_page: 100000
+  enable_evaluation: true
+  fuzzy_match_threshold: 0.80
+  min_confidence_threshold: 0.2
+  default_max_findings: 12
+  max_findings: 40
+
+# Per-phase narration.
+narration:
+  enabled: true
+  model: qwen-flash
+  temperature: 0.3
+  max_tokens: 60
+
+# OKF concept-doc synthesis.
+okf:
+  model: qwen-plus
+  temperature: 0.3
+  max_tokens: 900
+
+# Autonomous gap-following deep-research (`deepen`).
+deepen:
+  depth_cap: 3
+  min_rounds: 1
+  coverage_target: 0.8
+  facets_per_round: 4
+  max_concurrent_facets: 4
+  decompose_model: qwen-plus
+  critic_model: qwen-plus
+  temperature: 0.0
+  reasoning_effort: null              # null — thinking mode breaks json_object
+
+# Embedding client + file-ingest chunking.
+embedding:
+  model: text-embedding-v4
+  dim: 1536
+  input_char_cap: 8192
+  chunk_max_chars: 1800
+
+# KG build — extract entities/relations from findings into kg_nodes/kg_edges.
+knowledge_graph:
+  extraction_model: qwen-max
+  extraction_fallback_model: qwen-plus
+  temperature: 0.0
+  reasoning_effort: null              # null — thinking mode breaks json_object
+  max_findings: 120
+  max_finding_chars: 1200
+  node_match_threshold: 0.86
+  max_nodes: 400
+  max_edges: 1200
+
+# Domain-concept (glossary) extraction.
+concepts:
+  extract_model: qwen-plus
+  max_findings_context: 60
+  max_finding_chars: 1200
+  max_terms: 40
+
+# Multi-agent society (parallel researcher ensemble).
+society:
+  planner_model: qwen-max
+  critic_model: qwen-max
+  synthesizer_model: qwen-max        # qwen-long is opt-in for huge contexts only
+  temperature: 0.2
+  reasoning_effort: null              # null — thinking mode breaks json_object
+  n_researchers: 2                   # DEMO default
+  max_rounds: 3                      # DEMO default
+  max_attempts: 1                    # DEMO default
+  spawn_budget: 4                    # global child-gap spawn cap
+  synthesis_top_k_per_gap: 8        # cap findings fed to the Synthesizer
+  kg_extraction_enabled: false       # OFF for demo (most qwen-max-hungry)
+  max_llm_calls_per_run: 120        # per-run kill-switch (graceful stop)
