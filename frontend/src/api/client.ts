@@ -46,7 +46,7 @@ export function onApiModeChange(listener: (mode: ApiMode) => void): () => void {
   return () => modeListeners.delete(listener);
 }
 
-function setMode(next: ApiMode): void {
+export function setMode(next: ApiMode): void {
   if (mode === next) return;
   mode = next;
   modeListeners.forEach((l) => l(next));

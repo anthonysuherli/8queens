@@ -900,6 +900,7 @@ export const mockApi = {
     _project: string,
     _kb: string,
     _body: { topic: string; n_researchers?: number; max_rounds?: number },
+    _secret?: string,
   ): Promise<{ kb_id: string; run_id: string }> {
     return { kb_id: "kb_rag", run_id: "mock-run" };
   },

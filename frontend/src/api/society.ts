@@ -7,7 +7,7 @@
  *                                       └──▶ mockApi (live unreachable)
  */
 
-import { getApiMode } from "./client";
+import { getApiMode, setMode } from "./client";
 import { mockApi } from "./mock";
 import { ApiError, type SocietyEvent, type StartSocietyResponse } from "./types";
 
@@ -26,12 +26,13 @@ export async function startSociety(
   project: string,
   kb: string,
   body: { topic: string; n_researchers?: number; max_rounds?: number },
+  secret: string = SECRET,
 ): Promise<StartSocietyResponse> {
-  if (getApiMode() === "mock") return mockApi.startSociety(project, kb, body);
+  if (getApiMode() === "mock") return mockApi.startSociety(project, kb, body, secret);
   try {
     const res = await fetch(`${BASE}${kbPath(project, kb)}/society/start`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Society-Secret": SECRET },
+      headers: { "Content-Type": "application/json", "X-Society-Secret": secret },
       body: JSON.stringify(body),
     });
     if (!res.ok) {
@@ -40,7 +41,10 @@ export async function startSociety(
     }
     return (await res.json()) as StartSocietyResponse;
   } catch (err) {
-    if (isNetworkError(err)) return mockApi.startSociety(project, kb, body);
+    if (isNetworkError(err)) {
+      setMode("mock");
+      return mockApi.startSociety(project, kb, body, secret);
+    }
     throw err;
   }
 }
@@ -103,6 +107,7 @@ export async function* streamSociety(
     yield first.value;
   } catch (err) {
     if (isNetworkError(err)) {
+      setMode("mock");
       yield* mockApi.streamSociety(project, kb, runId);
       return;
     }
