@@ -90,6 +90,10 @@ class Settings(BaseSettings):
     mcp_user_email: str = Field(default="dev@qwen8.local", alias="QWEN8_MCP_USER_EMAIL")
     mcp_user_password: str = Field(default="dev-password-123", alias="QWEN8_MCP_USER_PASSWORD")
 
+    # Society write-gate shared secret. When set, POST /society/start requires
+    # the header X-Society-Secret == this value; absent → write routes disabled.
+    society_secret: str | None = Field(default=None, alias="QWEN8_SOCIETY_SECRET")
+
     # CORS / hosts. `NoDecode` + the validator below accept EITHER a JSON array
     # or a plain comma-separated string (the common convention for this env var),
     # rather than pydantic-settings' default JSON-only decode of list fields.

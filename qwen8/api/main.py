@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from qwen8.api.health import router as health_router
 from qwen8.api.routes_explore import router as explore_router
+from qwen8.api.routes_society import router as society_router
 from qwen8.api.routes_findings import router as findings_router
 from qwen8.api.routes_kg import router as kg_router
 from qwen8.api.routes_projects import router as projects_router
@@ -55,6 +56,7 @@ app.include_router(projects_router)
 app.include_router(kg_router)
 app.include_router(findings_router)
 app.include_router(explore_router)
+app.include_router(society_router)
 
 
 def main() -> None:
