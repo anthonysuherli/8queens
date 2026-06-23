@@ -69,17 +69,24 @@ def active_backend() -> str:
     return backend
 
 
-def get_store(access_token: str | None = None, *, org_id: str | None = None) -> Store:
+def get_store(
+    access_token: str | None = None,
+    *,
+    org_id: str | None = None,
+    db_path: str | None = None,
+) -> Store:
     """Return the active Store for this request.
 
-    Local: a cached SQLiteStore (connection reused). Cloud: a fresh
-    SupabaseStore bound to ``access_token`` for RLS-scoped finding ops and an
-    optional ``org_id`` (sourced from the verified request JWT) that skips the
-    store's internal MCP-path login. The cloud store is imported lazily so a
-    local-only install never needs the ``[cloud]`` extra.
+    Local: a cached SQLiteStore (connection reused). Pass ``db_path`` to
+    override the default path — tests use this to get an isolated file-backed
+    store without polluting the singleton cache. Cloud: a fresh SupabaseStore
+    bound to ``access_token`` for RLS-scoped finding ops and an optional
+    ``org_id`` (sourced from the verified request JWT) that skips the store's
+    internal MCP-path login. The cloud store is imported lazily so a local-only
+    install never needs the ``[cloud]`` extra.
     """
-    if active_backend() == "local":
-        path = _default_db_path()
+    if active_backend() == "local" or db_path is not None:
+        path = db_path or _default_db_path()
         store = _local_stores.get(path)
         if store is None:
             store = SQLiteStore(path)
