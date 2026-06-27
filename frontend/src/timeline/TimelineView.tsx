@@ -114,16 +114,16 @@ function LaneRow({ lane, events, pct, headPct }: {
       </div>
       <div className="tl-track">
         <div className="tl-head" style={{ left: `${headPct}%` }} />
-        {events.map((e, i) => {
+        {events.map((e) => {
           if (e.kind === "finding") {
-            return <span key={i} className="tl-finding" style={{ left: `${pct(e.t)}%`, background: lane.color }} />;
+            return <span key={`${e.frameIndex}-${e.kind}`} className="tl-finding" style={{ left: `${pct(e.t)}%`, background: lane.color }} />;
           }
           const cls = e.kind === "post-gap" ? "tl-chip tl-chip--gap"
             : e.kind === "claim" ? "tl-chip tl-chip--claim"
             : e.kind === "grade" ? "tl-chip tl-chip--grade"
             : "tl-chip tl-chip--report";
           const text = e.kind === "post-gap" ? "gap" : e.kind === "claim" ? "claim" : e.kind === "grade" ? "done" : "report";
-          return <span key={i} className={cls} style={{ left: `${pct(e.t)}%`, borderColor: lane.color }} title={e.label}>{text}</span>;
+          return <span key={`${e.frameIndex}-${e.kind}`} className={cls} style={{ left: `${pct(e.t)}%`, borderColor: lane.color }} title={e.label}>{text}</span>;
         })}
       </div>
     </div>

@@ -33,6 +33,7 @@
   border: 1px solid var(--line-bright); color: var(--text); background: var(--bg2); white-space: nowrap;
 }
 .tl-chip--gap { color: var(--accent); }
+.tl-chip--claim { color: var(--cyan); }
 .tl-chip--grade { color: var(--rich); }
 .tl-chip--report { color: var(--text); }
 .tl-brain { padding: 8px 12px; border-top: 1px solid var(--line); background: var(--bg2); }
