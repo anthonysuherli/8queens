@@ -9,3 +9,4 @@ dist/
 .superpowers/
 frontend/node_modules/
 frontend/dist/
+frontend/demo/
