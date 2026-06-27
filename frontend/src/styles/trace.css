@@ -17,7 +17,6 @@
   padding: 6px 10px;
   border-bottom: 1px solid var(--line);
 }
-.trace-stub { padding: 12px; color: var(--text-dim); font-family: var(--font-mono); }
 .trace-report { padding: 14px; overflow-y: auto; font-family: var(--font-body); }
 .trace-claim-h { color: var(--text); margin: 4px 0 10px; }
 .trace-claim-plain { color: var(--text-dim); margin: 6px 0; }

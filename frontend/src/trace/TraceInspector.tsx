@@ -51,7 +51,10 @@ export function TraceInspector({ model, selected }: Props) {
     );
   }
 
-  const [fid, idx] = selected.id.split("#");
+  if (selected.kind !== "source") return <div className="trace-insp" />;
+  const parts = selected.id.split("#");
+  if (parts.length !== 2) return <div className="trace-insp" />;
+  const [fid, idx] = parts;
   const src = model.findings[fid]?.sources[Number(idx)];
   if (!src) return <div className="trace-insp" />;
   const href = safeHref(src.url);
