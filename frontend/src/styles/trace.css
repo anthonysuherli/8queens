@@ -53,3 +53,7 @@
 .trace-q { color: var(--text); font-family: var(--font-mono); }
 .trace-life { margin: 8px 0; padding-left: 16px; }
 .trace-life-step { color: var(--text); font-size: 12px; margin: 3px 0; }
+.trace-transport-wrap { grid-column: 1 / -1; border-top: 1px solid var(--line); }
+.trace-transport { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+.trace-scrub { flex: 1; }
+.trace-frame-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }

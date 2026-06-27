@@ -16,6 +16,7 @@ interface Props {
   activeClaimId: string | null;
   selectedNodeId: string | null;
   onSelectNode: (n: SelectedNode) => void;
+  visible?: { gaps: Set<string>; findings: Set<string> };
 }
 
 const W = 760;
@@ -33,10 +34,11 @@ function bezier(a: Placed, b: Placed): string {
   return `M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
 }
 
-export function DerivationMap({ model, activeClaimId, selectedNodeId, onSelectNode }: Props) {
+export function DerivationMap({ model, activeClaimId, selectedNodeId, onSelectNode, visible }: Props) {
   const view = useMemo(() => {
     const claim = activeClaimId ? model.claims.find((c) => c.id === activeClaimId) ?? null : null;
-    const findingIds = claim ? claim.findingIds : Object.keys(model.findings);
+    let findingIds = claim ? claim.findingIds : Object.keys(model.findings);
+    if (visible) findingIds = findingIds.filter((fid) => visible.findings.has(fid));
     const gapIds = Array.from(
       new Set(findingIds.map((fid) => model.findings[fid]?.gapId).filter((g): g is string => !!g)),
     );
@@ -45,7 +47,7 @@ export function DerivationMap({ model, activeClaimId, selectedNodeId, onSelectNo
       (model.findings[fid]?.sources ?? []).forEach((_s, i) => sourceKeys.push(`${fid}#${i}`));
     }
     return { claim, findingIds, gapIds, sourceKeys };
-  }, [model, activeClaimId]);
+  }, [model, activeClaimId, visible]);
 
   const claimPlaced = layoutColumn(view.claim ? [view.claim.id] : [], COL.claim, H);
   const findingPlaced = layoutColumn(view.findingIds, COL.finding, H);
