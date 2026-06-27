@@ -98,6 +98,7 @@ interface AppState {
   travel: TravelState | null;
   flyTo: { nodeId: string; at: number } | null;
   society: SocietyState | null;
+  view: "graph" | "trace";
 
   boot(): Promise<void>;
   setScope(project: string, kb: string): Promise<void>;
@@ -128,6 +129,7 @@ interface AppState {
   teleport(nodeId: string): void;
   setNeighborIndex(index: number): void;
   setLastAction(text: string): void;
+  setView(view: "graph" | "trace"): void;
   runSociety(topic: string, opts?: { n_researchers?: number; max_rounds?: number }): Promise<void>;
 }
 
@@ -177,6 +179,7 @@ export const useStore = create<AppState>((set, get) => ({
   travel: null,
   flyTo: null,
   society: null,
+  view: "graph",
 
   async boot() {
     set({ booting: true, bootError: null });
@@ -516,6 +519,10 @@ export const useStore = create<AppState>((set, get) => ({
 
   setLastAction(text) {
     set({ lastAction: text });
+  },
+
+  setView(view) {
+    set({ view });
   },
 
   async runSociety(topic, opts = {}) {

@@ -17,12 +17,14 @@ import { TopBar } from "./panels/TopBar";
 import { useStore } from "./state/store";
 import { useHotkeys } from "./state/useHotkeys";
 import { TravelHud } from "./travel/TravelHud";
+import TraceView from "./trace/TraceView";
 
 export default function App() {
   const booting = useStore((s) => s.booting);
   const bootError = useStore((s) => s.bootError);
   const boot = useStore((s) => s.boot);
   const travel = useStore((s) => s.travel);
+  const view = useStore((s) => s.view);
 
   useHotkeys();
 
@@ -56,15 +58,19 @@ export default function App() {
   return (
     <div className="shell">
       <TopBar />
-      <div className="shell-main">
-        <LeftRail />
-        <div style={{ position: "relative", minWidth: 0 }}>
-          <SocietyPanel />
-          <GraphCanvas />
-          {travel && <TravelHud />}
+      {view === "trace" ? (
+        <TraceView />
+      ) : (
+        <div className="shell-main">
+          <LeftRail />
+          <div style={{ position: "relative", minWidth: 0 }}>
+            <SocietyPanel />
+            <GraphCanvas />
+            {travel && <TravelHud />}
+          </div>
+          <Inspector />
         </div>
-        <Inspector />
-      </div>
+      )}
       <StatusBar />
       <FindingDrawer />
       <ConceptDocReader />

@@ -25,6 +25,8 @@ export function TopBar() {
   const selectedNodes = useStore((s) => s.selectedNodes);
   const setLastAction = useStore((s) => s.setLastAction);
   const pushToast = useStore((s) => s.pushToast);
+  const view = useStore((s) => s.view);
+  const setView = useStore((s) => s.setView);
 
   const toggleConnect = () => {
     if (connectFrom) {
@@ -49,6 +51,21 @@ export function TopBar() {
       </div>
 
       <GraphSearch />
+
+      <div className="tb-viewtoggle">
+        <button
+          className={`btn${view === "graph" ? " btn--active" : ""}`}
+          onClick={() => setView("graph")}
+        >
+          graph
+        </button>
+        <button
+          className={`btn${view === "trace" ? " btn--active" : ""}`}
+          onClick={() => setView("trace")}
+        >
+          trace
+        </button>
+      </div>
 
       <div className="tb-actions">
         <button className="btn" onClick={() => setAddNodeOpen(true)} title="Add a node">

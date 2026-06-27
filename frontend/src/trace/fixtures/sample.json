@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "topic": "What is the stablecoin regulatory landscape in 2026?",
+    "run_id": "sample", "kb_id": "sample", "captured_at": "2026-06-27T00:00:00Z",
+    "n_researchers": 2, "max_rounds": 3, "rounds": 1, "finding_count": 2,
+    "gaps_done": 1, "gaps_dead": 0, "models": { "planner": "qwen-max" }
+  },
+  "frames": [
+    { "t": 0, "event": "phase", "phase": "seeding", "round": 0 },
+    { "t": 10, "event": "gap_opened", "gap_id": "g1", "question": "How are reserves audited?", "parent_id": null },
+    { "t": 20, "event": "gap_opened", "gap_id": "g2", "question": "Who are the major issuers?", "parent_id": null },
+    { "t": 30, "event": "phase", "phase": "researching", "round": 1 },
+    { "t": 40, "event": "gap_claimed", "gap_id": "g1", "claimed_by": "r1", "role": "researcher" },
+    { "t": 50, "event": "finding_merged", "finding_id": "f1", "gap_id": "g1", "title": "MiCA reserve attestation rules", "contributor": "r1" },
+    { "t": 60, "event": "gap_filled", "gap_id": "g1", "coverage": "rich", "finding_ids": ["f1"], "status": "verified" },
+    { "t": 70, "event": "gap_claimed", "gap_id": "g2", "claimed_by": "r2", "role": "researcher" },
+    { "t": 80, "event": "finding_merged", "finding_id": "f2", "gap_id": "g2", "title": "Circle issues USDC under NYDFS", "contributor": "r2" },
+    { "t": 90, "event": "gap_filled", "gap_id": "g2", "coverage": "rich", "finding_ids": ["f2"], "status": "done" },
+    { "t": 100, "event": "report", "report": "## Stablecoin landscape 2026\n\nReserves face attestation requirements (finding_id: f1). Major issuers operate under emerging frameworks (finding_id: f2).", "unanswered": [] }
+  ],
+  "gaps": [
+    { "gap_id": "g1", "question": "How are reserves audited?", "status": "done", "owner": "r1", "coverage": "rich", "attempts": 1, "reason": null, "parent_id": null, "finding_ids": ["f1"], "created_at": "2026-06-27T00:00:00Z", "updated_at": "2026-06-27T00:01:00Z" },
+    { "gap_id": "g2", "question": "Who are the major issuers?", "status": "done", "owner": "r2", "coverage": "rich", "attempts": 1, "reason": null, "parent_id": null, "finding_ids": ["f2"], "created_at": "2026-06-27T00:00:00Z", "updated_at": "2026-06-27T00:01:00Z" }
+  ],
+  "findings": {
+    "f1": { "id": "f1", "title": "MiCA reserve attestation rules", "content": "EU MiCA requires stablecoin issuers to hold fully-backed reserves with regular third-party attestation.", "category": "regulation", "confidence": 0.86, "provenance": [{ "url": "https://eur-lex.europa.eu/mica", "domain": "eur-lex.europa.eu", "query": "MiCA stablecoin reserve attestation" }] },
+    "f2": { "id": "f2", "title": "Circle issues USDC under NYDFS", "content": "Circle issues USDC under NYDFS oversight, publishing monthly reserve reports.", "category": "issuer", "confidence": 0.9, "provenance": [{ "url": "https://www.circle.com/usdc", "domain": "circle.com", "query": "Circle USDC NYDFS reserves" }] }
+  },
+  "report": {
+    "markdown": "## Stablecoin landscape 2026\n\nReserves face attestation requirements (finding_id: f1). Major issuers operate under emerging frameworks (finding_id: f2).",
+    "unanswered": []
+  }
+}

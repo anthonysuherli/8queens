@@ -5,5 +5,6 @@ import "./styles/base.css";
 import "./styles/layout.css";
 import "./styles/panels.css";
 import "./styles/canvas.css";
+import "./styles/trace.css";
 
 createRoot(document.getElementById("root")!).render(<App />);
