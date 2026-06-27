@@ -43,3 +43,14 @@
 .trace-hit { cursor: pointer; }
 .trace-hit:hover .trace-node-label { fill: var(--text); }
 .trace-hit--sel .trace-node { stroke: var(--accent-bright); stroke-width: 2.5; }
+.trace-insp { padding: 14px; overflow-y: auto; font-family: var(--font-body); }
+.trace-insp-empty { color: var(--text-faint); font-family: var(--font-mono); font-size: 12px; }
+.trace-insp-kind { font-family: var(--font-mono); font-size: 10px; color: var(--accent); text-transform: uppercase; }
+.trace-insp-title { color: var(--text); margin: 4px 0 8px; font-size: 14px; }
+.trace-insp-row { color: var(--text-dim); font-size: 12px; margin: 4px 0; }
+.trace-insp-body { color: var(--text); font-size: 13px; line-height: 1.5; }
+.trace-insp-note { color: var(--text-faint); font-size: 11px; font-style: italic; }
+.trace-insp-link { color: var(--accent); font-size: 12px; word-break: break-all; }
+.trace-q { color: var(--text); font-family: var(--font-mono); }
+.trace-life { margin: 8px 0; padding-left: 16px; }
+.trace-life-step { color: var(--text); font-size: 12px; margin: 3px 0; }

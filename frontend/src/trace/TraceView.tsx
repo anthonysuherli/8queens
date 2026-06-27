@@ -3,6 +3,7 @@ import type { SocietyRunBundle } from "../api/types";
 import { buildTrace } from "./buildTrace";
 import { DerivationMap, type SelectedNode } from "./DerivationMap";
 import { ReportPane } from "./ReportPane";
+import { TraceInspector } from "./TraceInspector";
 import rawBundle from "./fixtures/sample.json";
 
 const bundle = rawBundle as unknown as SocietyRunBundle;
@@ -29,7 +30,7 @@ export default function TraceView() {
         selectedNodeId={selected?.id ?? null}
         onSelectNode={setSelected}
       />
-      <div className="trace-stub">inspector → Task 6</div>
+      <TraceInspector model={model} selected={selected} />
     </div>
   );
 }
