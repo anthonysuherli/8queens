@@ -272,3 +272,63 @@ export interface StartSocietyResponse {
   kb_id: string;
   run_id: string;
 }
+
+// ---------------------------------------------------------------------------
+// recorded run bundle (Trace view — see docs/sse-frames.md for frame shapes)
+
+export interface BundleSource {
+  url: string;
+  domain: string;
+  query: string;
+}
+
+export interface BundleFinding {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  confidence: number | null;
+  provenance: BundleSource[];
+}
+
+export interface BundleGap {
+  gap_id: string;
+  question: string;
+  status: "open" | "claimed" | "verified" | "done" | "dead";
+  owner: string | null;
+  coverage: Coverage | null;
+  attempts: number;
+  reason: string | null;
+  parent_id: string | null;
+  finding_ids: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BundleFrame {
+  t: number;
+  event: string;
+  [key: string]: unknown;
+}
+
+export interface BundleMeta {
+  topic: string;
+  run_id: string;
+  kb_id: string;
+  captured_at: string;
+  n_researchers: number;
+  max_rounds: number;
+  rounds: number;
+  finding_count: number;
+  gaps_done: number;
+  gaps_dead: number;
+  models: Record<string, string>;
+}
+
+export interface SocietyRunBundle {
+  meta: BundleMeta;
+  frames: BundleFrame[];
+  gaps: BundleGap[];
+  findings: Record<string, BundleFinding>;
+  report: { markdown: string; unanswered: string[] };
+}
