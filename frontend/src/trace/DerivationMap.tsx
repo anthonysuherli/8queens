@@ -47,17 +47,13 @@ export function DerivationMap({ model, activeClaimId, selectedNodeId, onSelectNo
     return { claim, findingIds, gapIds, sourceKeys };
   }, [model, activeClaimId]);
 
-  const claimPlaced = layoutColumn(view.claim ? [view.claim.id] : ["all"], COL.claim, H);
+  const claimPlaced = layoutColumn(view.claim ? [view.claim.id] : [], COL.claim, H);
   const findingPlaced = layoutColumn(view.findingIds, COL.finding, H);
   const gapPlaced = layoutColumn(view.gapIds, COL.gap, H);
   const sourcePlaced = layoutColumn(view.sourceKeys, COL.source, H);
 
-  const findingPos = new Map(findingPlaced.map((p) => [p.id, p]));
   const gapPos = new Map(gapPlaced.map((p) => [p.id, p]));
   const sourcePos = new Map(sourcePlaced.map((p) => [p.id, p]));
-
-  // findingPos is used implicitly via findingPlaced iteration below; suppress lint
-  void findingPos;
 
   const edges: Array<{ a: Placed; b: Placed }> = [];
   for (const fp of findingPlaced) {
