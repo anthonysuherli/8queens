@@ -23,7 +23,7 @@ The view is fed by a **recorded run bundle** (one JSON file) rather than a live 
 **Goal.** Given a recorded society run, let a viewer:
 1. Read the real cited report; click any claim carrying a `(finding_id: …)` citation.
 2. See an animated **derivation map** (Claim · Findings · Gaps · Sources) light the selected claim's subgraph and dim the rest.
-3. Open a **detail inspector** on any node to see the deep "why": a gap's full lifecycle including the Critic's actual reopen `reason`, `attempts`, and `band1_hits`; a finding's content/category/confidence; a source's URL + the exact search `query`.
+3. Open a **detail inspector** on any node to see the deep "why": a gap's full lifecycle including the Critic's actual reopen `reason` and `attempts`; a finding's content/category/confidence; a source's URL + the exact search `query`.
 4. Optionally **scrub** the run forward (play/pause/step) to watch the negotiation build up over time.
 
 **Non-goals (explicitly out of MVP).**
@@ -130,7 +130,7 @@ Requires LLM + Tavily keys + network at **capture** time only. The committed fix
 
 ### 6.2 Chain resolution (claim → finding → gap → source)
 - **finding → gap:** prefer the `finding_merged` frame map (`finding_id → gap_id`); fall back to `gaps[].finding_ids`.
-- **gap lifecycle:** fold the ordered `frames` for that `gap_id` into a `GapEvent[]` — `opened` (planner if `parent_id == null`, else critic child), `claimed` (with `by` + the enclosing `round`/`phase` from the preceding `phase` frame), `filled` (coverage), a `reopened` event each time a `gap_opened` recurs after a `gap_filled`. Overlay the **terminal** `status`/`attempts`/`reason`/`band1_hits`/`owner` from `gaps[]`.
+- **gap lifecycle:** fold the ordered `frames` for that `gap_id` into a `GapEvent[]` — `opened` (planner if `parent_id == null`, else critic child), `claimed` (with `by` + the enclosing `round`/`phase` from the preceding `phase` frame), `filled` (coverage), a `reopened` event each time a `gap_opened` recurs after a `gap_filled`. Overlay the **terminal** `status`/`attempts`/`reason`/`owner` from `gaps[]`. (`band1_hits` is intentionally not carried through the bundle — `status`/`attempts`/`coverage`/`reason` convey the "why" without it.)
 - **finding → sources:** `findings[id].provenance` → `Source[]`.
 
 ### 6.3 Output types (`frontend/src/trace/traceModel.ts`)
@@ -173,7 +173,7 @@ A full-surface view replacing the graph canvas when `view === "trace"`:
   - lifecycle/coverage color: `rich`/`done` green, `sparse`/`reopened` amber, `gap`/`dead` red (reuse the app's existing coverage treatment — the `coverage-fill--rich|sparse|gap` classes / `tokens.css` variables used by `SocietyPanel`).
   - contributor tint on each gap = the claiming researcher (`frontend/src/graph/contributors.ts::contributorColor`).
 - **Right — detail inspector** (`TraceInspector.tsx`): click any node →
-  - **gap:** full lifecycle timeline (`claimed r1 → verified sparse → Critic reopened (insufficient, attempt 2) → done`), `reason`, `attempts`, `band1_hits`, terminal `status` (incl. an explicit **`dead`** explanation).
+  - **gap:** full lifecycle timeline (`claimed r1 → verified sparse → Critic reopened (insufficient, attempt 2) → done`), `reason`, `attempts`, terminal `status` (incl. an explicit **`dead`** explanation).
   - **finding:** title, content, category, confidence, contributor.
   - **source:** `url` (click-through), `domain`, the exact search `query`.
 - **Bottom — transport** (`Transport.tsx`): play / pause / step / scrub over `frames[]`. A `playhead` index gates which map nodes are visible (a node appears once its introducing frame index ≤ playhead). Claim-select and scrub share one `TraceModel`; they are independent controls over the same data.
