@@ -18,3 +18,19 @@
   border-bottom: 1px solid var(--line);
 }
 .trace-stub { padding: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+.trace-report { padding: 14px; overflow-y: auto; font-family: var(--font-body); }
+.trace-claim-h { color: var(--text); margin: 4px 0 10px; }
+.trace-claim-plain { color: var(--text-dim); margin: 6px 0; }
+.trace-claim {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: none; border: 1px solid transparent; border-radius: var(--radius);
+  padding: 6px 8px; margin: 2px 0; color: var(--text); font: inherit;
+}
+.trace-claim:hover { border-color: var(--line-bright); }
+.trace-claim--active { border-color: var(--accent); background: var(--accent-dim); }
+.trace-claim-cites { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
+.trace-cite {
+  font-family: var(--font-mono); font-size: 10px; color: var(--accent);
+  border: 1px solid var(--line-bright); border-radius: 3px; padding: 0 4px;
+}
+.trace-cite--missing { color: var(--gap); border-color: var(--gap); }
