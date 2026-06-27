@@ -13,3 +13,33 @@
   padding: 6px 10px;
   border-bottom: 1px solid var(--line);
 }
+.tl-phaseband { display: flex; height: 26px; border-bottom: 1px solid var(--line); }
+.tl-phase {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-faint);
+  border-right: 1px solid var(--line); background: var(--bg0); min-width: 0; overflow: hidden;
+}
+.tl-phase--active { color: var(--bg0); background: var(--accent); font-weight: 500; }
+.tl-lanes { flex: 1; min-height: 0; overflow-y: auto; }
+.tl-row { display: grid; grid-template-columns: 130px 1fr; align-items: center; height: 44px; border-bottom: 1px solid var(--line); }
+.tl-lane-label { display: flex; align-items: center; gap: 6px; padding: 0 10px; font-family: var(--font-mono); font-size: 12px; }
+.tl-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.tl-track { position: relative; height: 100%; border-left: 1px solid var(--line); overflow: hidden; }
+.tl-head { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent-bright); opacity: 0.7; }
+.tl-finding { position: absolute; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; opacity: 0.7; }
+.tl-chip {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 9px; padding: 1px 5px; border-radius: 3px;
+  border: 1px solid var(--line-bright); color: var(--text); background: var(--bg2); white-space: nowrap;
+}
+.tl-chip--gap { color: var(--accent); }
+.tl-chip--grade { color: var(--rich); }
+.tl-chip--report { color: var(--text); }
+.tl-brain { padding: 8px 12px; border-top: 1px solid var(--line); background: var(--bg2); }
+.tl-brain-head { display: flex; align-items: baseline; gap: 14px; font-size: 12px; color: var(--text-dim); }
+.tl-brain-count { color: var(--text); font-family: var(--font-mono); }
+.tl-cov { font-family: var(--font-mono); margin-left: auto; }
+.tl-brain-bar { height: 12px; background: var(--bg0); border-radius: var(--radius); overflow: hidden; margin: 5px 0; }
+.tl-brain-fill { height: 100%; transition: width 120ms linear; }
+.tl-ticker { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-transport { border-top: 1px solid var(--line); }
