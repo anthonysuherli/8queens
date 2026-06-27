@@ -34,3 +34,12 @@
   border: 1px solid var(--line-bright); border-radius: 3px; padding: 0 4px;
 }
 .trace-cite--missing { color: var(--gap); border-color: var(--gap); }
+.trace-map { width: 100%; height: 100%; display: block; }
+.trace-edge { fill: none; stroke: var(--line-bright); stroke-width: 1.5; opacity: 0.5; }
+.trace-node { stroke: var(--bg0); stroke-width: 1.5; }
+.trace-node--claim { fill: var(--accent); }
+.trace-node--source { fill: var(--text-dim); }
+.trace-node-label { fill: var(--text-dim); font-family: var(--font-mono); font-size: 10px; }
+.trace-hit { cursor: pointer; }
+.trace-hit:hover .trace-node-label { fill: var(--text); }
+.trace-hit--sel .trace-node { stroke: var(--accent-bright); stroke-width: 2.5; }
