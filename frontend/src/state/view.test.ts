@@ -8,5 +8,9 @@ describe("view toggle", () => {
     expect(useStore.getState().view).toBe("trace");
     useStore.getState().setView("graph");
     expect(useStore.getState().view).toBe("graph");
+    useStore.getState().setView("timeline");
+    expect(useStore.getState().view).toBe("timeline");
+    useStore.getState().setView("graph");
+    expect(useStore.getState().view).toBe("graph");
   });
 });

@@ -18,6 +18,7 @@ import { useStore } from "./state/store";
 import { useHotkeys } from "./state/useHotkeys";
 import { TravelHud } from "./travel/TravelHud";
 import TraceView from "./trace/TraceView";
+import TimelineView from "./timeline/TimelineView";
 
 export default function App() {
   const booting = useStore((s) => s.booting);
@@ -60,6 +61,8 @@ export default function App() {
       <TopBar />
       {view === "trace" ? (
         <TraceView />
+      ) : view === "timeline" ? (
+        <TimelineView />
       ) : (
         <div className="shell-main">
           <LeftRail />

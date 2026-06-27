@@ -98,7 +98,7 @@ interface AppState {
   travel: TravelState | null;
   flyTo: { nodeId: string; at: number } | null;
   society: SocietyState | null;
-  view: "graph" | "trace";
+  view: "graph" | "trace" | "timeline";
 
   boot(): Promise<void>;
   setScope(project: string, kb: string): Promise<void>;
@@ -129,7 +129,7 @@ interface AppState {
   teleport(nodeId: string): void;
   setNeighborIndex(index: number): void;
   setLastAction(text: string): void;
-  setView(view: "graph" | "trace"): void;
+  setView(view: "graph" | "trace" | "timeline"): void;
   runSociety(topic: string, opts?: { n_researchers?: number; max_rounds?: number }): Promise<void>;
 }
 

@@ -65,6 +65,12 @@ export function TopBar() {
         >
           trace
         </button>
+        <button
+          className={`btn${view === "timeline" ? " btn--active" : ""}`}
+          onClick={() => setView("timeline")}
+        >
+          timeline
+        </button>
       </div>
 
       <div className="tb-actions">
