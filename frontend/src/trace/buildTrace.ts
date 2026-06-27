@@ -39,14 +39,19 @@ export function splitClaims(markdown: string, findings: Record<string, unknown>)
       for (let i = 0; i < citeMatches.length; i++) {
         const cm = citeMatches[i];
         const end = cm.index + cm[0].length;
-        // For the last match, also absorb any trailing text.
-        const sliceEnd = i === citeMatches.length - 1 ? block.length : end;
-        const text = block.slice(last, sliceEnd).trim();
+        const text = block.slice(last, end).trim();
         const ids = cm[1].split(",").map((s) => s.trim()).filter(Boolean);
         const findingIds = ids.filter((id) => id in findings);
         const unresolvedIds = ids.filter((id) => !(id in findings));
         if (text) claims.push({ id: `claim-${n++}`, text, kind: "prose", findingIds, unresolvedIds });
         last = end;
+      }
+      // Emit any trailing text after the last citation. If it's only inert
+      // punctuation/whitespace, absorb it silently; otherwise it's its own
+      // uncited prose claim (false provenance if we attributed it to the last citation).
+      const tail = block.slice(last).trim();
+      if (tail && !/^[\s.,;:!?]*$/.test(tail)) {
+        claims.push({ id: `claim-${n++}`, text: tail, kind: "prose", findingIds: [], unresolvedIds: [] });
       }
     }
   }

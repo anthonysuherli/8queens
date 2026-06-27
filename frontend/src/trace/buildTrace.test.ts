@@ -62,6 +62,57 @@ describe("splitClaims", () => {
   });
 });
 
+describe("splitClaims — uncited trailing prose", () => {
+  it("emits substantive trailing text after the last citation as its own uncited claim", () => {
+    const markdown = "X confirmed (finding_id: f1). Y is unverified.";
+    const findings = { f1: {} };
+    const claims = splitClaims(markdown, findings);
+    // 2 claims: one cited, one uncited
+    expect(claims).toHaveLength(2);
+    expect(claims[0].findingIds).toEqual(["f1"]);
+    expect(claims[0].unresolvedIds).toEqual([]);
+    // The uncited tail must NOT carry f1's provenance
+    expect(claims[1].findingIds).toEqual([]);
+    expect(claims[1].unresolvedIds).toEqual([]);
+    expect(claims[1].kind).toBe("prose");
+  });
+});
+
+describe("buildLifecycle — gaps[] done fallback", () => {
+  it("appends a done terminal from gaps[] when no gap_filled done frame exists", () => {
+    // gap_id "gx" has status "done" in gaps[] but only a "verified" fill frame (not "done")
+    const bundle: SocietyRunBundle = {
+      meta: {
+        topic: "t", run_id: "r", kb_id: "k", captured_at: "2026-06-27T00:00:00Z",
+        n_researchers: 1, max_rounds: 1, rounds: 1, finding_count: 1,
+        gaps_done: 1, gaps_dead: 0, models: { planner: "qwen-max" },
+      },
+      frames: [
+        { t: 0, event: "phase", phase: "seeding", round: 0 },
+        { t: 10, event: "gap_opened", gap_id: "gx", question: "what?", parent_id: null },
+        { t: 20, event: "gap_filled", gap_id: "gx", coverage: "sparse", finding_ids: [], status: "verified" },
+      ],
+      gaps: [
+        {
+          gap_id: "gx", question: "what?", status: "done", owner: "ra",
+          coverage: "rich", attempts: 1, reason: null, parent_id: null,
+          finding_ids: [], created_at: "x", updated_at: "y",
+        },
+      ],
+      findings: {},
+      report: { markdown: "", unanswered: [] },
+    };
+    const m = buildTrace(bundle);
+    const kinds = m.gaps.gx.lifecycle.map((e) => e.kind);
+    // Must end with "done" via the sawDone===false fallback
+    expect(kinds[kinds.length - 1]).toBe("done");
+    // The done event from the fallback has no timestamp
+    const doneEvent = m.gaps.gx.lifecycle.find((e) => e.kind === "done");
+    expect(doneEvent).toBeDefined();
+    expect((doneEvent as { t?: number }).t).toBeUndefined();
+  });
+});
+
 describe("buildTrace", () => {
   it("wires findings to their gaps, contributors, and sources", () => {
     const m = buildTrace(BUNDLE);
