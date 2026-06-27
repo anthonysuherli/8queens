@@ -34,9 +34,8 @@ export default function TimelineView() {
   };
 
   const cur = cumulativeAt(model, playhead);
-  const pct = (t: number) => (model.durationT ? (t / model.durationT) * 100 : 0);
-  const headT = model.events.length ? playheadT(model, playhead) : 0;
-  const headPct = pct(headT);
+  const pct = (i: number) => (frameCount > 0 ? (i / frameCount) * 100 : 0);
+  const headPct = pct(playhead);
   const brainPct = model.totalFindings ? (cur.findings / model.totalFindings) * 100 : 0;
 
   const byLane = (laneId: string): TimelineEvent[] =>
@@ -49,11 +48,11 @@ export default function TimelineView() {
       </div>
 
       <div className="tl-phaseband">
-        {model.phases.map((p, i) => (
+        {model.phases.map((p) => (
           <div
-            key={i}
+            key={`${p.phase}-${p.round}`}
             className={`tl-phase tl-phase--${p.phase}${cur.phase === p.phase && cur.round === p.round ? " tl-phase--active" : ""}`}
-            style={{ width: `${pct(p.endT) - pct(p.startT)}%` }}
+            style={{ width: `${pct(p.endIndex) - pct(p.startIndex)}%` }}
           >
             {p.phase}
           </div>
@@ -93,13 +92,6 @@ export default function TimelineView() {
   );
 }
 
-function playheadT(model: ReturnType<typeof buildTimeline>, playhead: number): number {
-  let t = 0;
-  for (const e of model.events) if (e.frameIndex <= playhead) t = Math.max(t, e.t);
-  for (const p of model.phases) if (p.startIndex <= playhead) t = Math.max(t, p.startT);
-  return t;
-}
-
 function LaneRow({ lane, events, pct, headPct }: {
   lane: TimelineLane;
   events: TimelineEvent[];
@@ -116,14 +108,14 @@ function LaneRow({ lane, events, pct, headPct }: {
         <div className="tl-head" style={{ left: `${headPct}%` }} />
         {events.map((e) => {
           if (e.kind === "finding") {
-            return <span key={`${e.frameIndex}-${e.kind}`} className="tl-finding" style={{ left: `${pct(e.t)}%`, background: lane.color }} />;
+            return <span key={`${e.frameIndex}-${e.kind}`} className="tl-finding" style={{ left: `${pct(e.frameIndex)}%`, background: lane.color }} />;
           }
           const cls = e.kind === "post-gap" ? "tl-chip tl-chip--gap"
             : e.kind === "claim" ? "tl-chip tl-chip--claim"
             : e.kind === "grade" ? "tl-chip tl-chip--grade"
             : "tl-chip tl-chip--report";
           const text = e.kind === "post-gap" ? "gap" : e.kind === "claim" ? "claim" : e.kind === "grade" ? "done" : "report";
-          return <span key={`${e.frameIndex}-${e.kind}`} className={cls} style={{ left: `${pct(e.t)}%`, borderColor: lane.color }} title={e.label}>{text}</span>;
+          return <span key={`${e.frameIndex}-${e.kind}`} className={cls} style={{ left: `${pct(e.frameIndex)}%`, borderColor: lane.color }} title={e.label}>{text}</span>;
         })}
       </div>
     </div>
