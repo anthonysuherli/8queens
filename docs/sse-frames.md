@@ -34,6 +34,19 @@ edges add `source/target/relation`); IDs are stable + unique (the graph is `mult
 | `done` | `{ "run_id": str, "rounds": int, "finding_count": int, "gaps_done": int, "gaps_dead": int }` |
 | `error` | `{ "error": str, "fatal": bool }` |
 
+## Additive frames (not part of the frozen 11; consumers may ignore)
+
+| `event:` | `data` JSON payload |
+|---|---|
+| `budget` | `{ "used": int, "max": int\|null, "phase": "seeding"\|"researching"\|"critiquing"\|"synthesizing", "round": int }` |
+
+`budget` is emitted once after each phase finishes, reading the ai_gateway
+kill-switch counter (`max` = `cfg.society.max_llm_calls_per_run`). Phases run
+sequentially, so frame-to-frame deltas are exact per-role LLM-call costs
+(researchers `gather` concurrently and are reported as one phase). Named SSE
+events are opt-in per listener, so old consumers are unaffected. Replay mode
+(`?replay=1`) does not emit `budget` — there is no live counter to report.
+
 ## Mock-parity rule (mandatory)
 
 TS is strict (`noUnusedLocals`/`noUnusedParameters`). `mock.ts` auto-engages on

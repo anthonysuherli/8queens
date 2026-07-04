@@ -18,6 +18,9 @@ export function SocietyPanel() {
   const overall = society?.overall ?? null;
   const pct = overall ? COVERAGE_PCT[overall] : 0;
   const gaps = society ? Object.entries(society.gaps) : [];
+  const budgetPct = society?.budget?.max
+    ? Math.min(100, (society.budget.used / society.budget.max) * 100)
+    : 0;
 
   return (
     <div className="society-panel">
@@ -50,6 +53,20 @@ export function SocietyPanel() {
             <div className={`coverage-fill coverage-fill--${overall ?? "none"}`} style={{ width: `${pct}%` }} />
             <span className="coverage-label">{overall ?? "no coverage yet"}</span>
           </div>
+          {society.budget && (
+            <div
+              className="coverage-meter"
+              title="LLM-call kill-switch: the run stops gracefully at the cap"
+            >
+              <div
+                className={`budget-fill${budgetPct > 80 ? " budget-fill--hot" : ""}`}
+                style={{ width: `${budgetPct}%` }}
+              />
+              <span className="coverage-label">
+                LLM calls {society.budget.used}/{society.budget.max ?? "∞"}
+              </span>
+            </div>
+          )}
           <div className="gap-list">
             {gaps.map(([id, g]) => (
               <div key={id} className={`gap-row gap-row--${g.status}`}>

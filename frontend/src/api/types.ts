@@ -255,6 +255,16 @@ export interface SocietyErrorEvent {
   fatal: boolean;
 }
 
+/** Additive frame (not in the frozen 11): kill-switch countdown, one per
+ *  finished phase. Frame-to-frame deltas are exact per-role LLM-call costs. */
+export interface SocietyBudgetEvent {
+  event: "budget";
+  used: number;
+  max: number | null;
+  phase: "seeding" | "researching" | "critiquing" | "synthesizing";
+  round: number;
+}
+
 export type SocietyEvent =
   | SocietyPhaseEvent
   | SocietyNodeAddedEvent
@@ -266,7 +276,8 @@ export type SocietyEvent =
   | SocietyCoverageEvent
   | SocietyReportEvent
   | SocietyDoneEvent
-  | SocietyErrorEvent;
+  | SocietyErrorEvent
+  | SocietyBudgetEvent;
 
 export interface StartSocietyResponse {
   kb_id: string;

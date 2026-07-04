@@ -836,6 +836,8 @@
 .coverage-fill--sparse { background: #f5a83c; }
 .coverage-fill--rich { background: #46d39a; }
 .coverage-label { position: absolute; left: 8px; top: 0; line-height: 16px; font-size: 10px; color: #0c1118; font-weight: 600; }
+.budget-fill { height: 100%; transition: width 600ms ease; background: #5c8dd6; }
+.budget-fill--hot { background: #e05555; }
 .gap-list { display: flex; flex-direction: column; gap: 4px; }
 .gap-row { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 6px; border-radius: 4px; background: #11161f; }
 .gap-row--done { opacity: 0.65; }

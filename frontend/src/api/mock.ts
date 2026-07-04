@@ -917,6 +917,7 @@ export const mockApi = {
     yield await emit({ event: "phase", phase: "seeding", round: 0 }, 200);
     yield await emit({ event: "gap_opened", gap_id: "g1", question: "What is the regulatory landscape?", parent_id: null });
     yield await emit({ event: "gap_opened", gap_id: "g2", question: "Who are the major issuers?", parent_id: null });
+    yield await emit({ event: "budget", used: 3, max: 120, phase: "seeding", round: 0 }, 150);
     yield await emit({ event: "phase", phase: "researching", round: 1 });
     yield await emit({ event: "gap_claimed", gap_id: "g1", claimed_by: "r0", role: "researcher" });
     yield await emit({ event: "gap_claimed", gap_id: "g2", claimed_by: "r1", role: "researcher" });
@@ -939,15 +940,18 @@ export const mockApi = {
     yield await emit({ event: "coverage", gap_id: "g1", coverage: "sparse", band1_hits: 1, overall: "sparse" });
     yield await emit({ event: "gap_filled", gap_id: "g1", coverage: "sparse", finding_ids: ["mf_1"], status: "verified" });
     yield await emit({ event: "gap_filled", gap_id: "g2", coverage: "rich", finding_ids: ["mf_2"], status: "verified" });
+    yield await emit({ event: "budget", used: 34, max: 120, phase: "researching", round: 1 }, 150);
     yield await emit({ event: "phase", phase: "critiquing", round: 1 });
     yield await emit({ event: "gap_filled", gap_id: "g2", coverage: "rich", finding_ids: ["mf_2"], status: "done" });
     yield await emit({ event: "coverage", gap_id: null, coverage: "rich", band1_hits: 2, overall: "rich" });
+    yield await emit({ event: "budget", used: 41, max: 120, phase: "critiquing", round: 1 }, 150);
     yield await emit({ event: "phase", phase: "synthesizing", round: 1 });
     yield await emit({
       event: "report",
       report: "## Stablecoin landscape 2026\n\nMajor issuers operate under emerging frameworks (finding_id: mf_1). Circle issues USDC under NYDFS oversight (finding_id: mf_2).\n",
       unanswered: ["Long-tail offshore issuers remain under-covered"],
     });
+    yield await emit({ event: "budget", used: 46, max: 120, phase: "synthesizing", round: 1 }, 150);
     yield await emit({ event: "done", run_id: "mock-run", rounds: 1, finding_count: 2, gaps_done: 1, gaps_dead: 0 }, 200);
   },
 };

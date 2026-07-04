@@ -50,6 +50,7 @@ export interface SocietyState {
   report: string | null;
   unanswered: string[];
   findingCount: number;
+  budget: { used: number; max: number | null } | null;
 }
 
 export interface TravelState {
@@ -532,6 +533,7 @@ export const useStore = create<AppState>((set, get) => ({
       society: {
         running: true, runId: null, phase: "starting", round: 0, overall: null,
         gaps: {}, contributors: [], report: null, unanswered: [], findingCount: 0,
+        budget: null,
       },
     });
     const patchSociety = (p: Partial<SocietyState>) => {
@@ -588,6 +590,9 @@ function applySocietyEvent(
       // Always update the overall meter from e.overall (always present in the payload).
       // Per-gap updates (gap_id != null) also carry an overall reading from the backend.
       patch({ overall: e.overall });
+      break;
+    case "budget":
+      patch({ budget: { used: e.used, max: e.max } });
       break;
     case "node_added":
       if (!graph.hasNode(e.id)) {

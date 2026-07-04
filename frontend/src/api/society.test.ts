@@ -11,13 +11,23 @@ describe("mockApi.streamSociety", () => {
         events.push(e);
       }
       const names = events.map((e) => e.event);
-      // every frame in the frozen 8.2 schema must be exercised at least once
+      // every frame in the frozen 8.2 schema must be exercised at least once,
+      // plus the additive budget frame (one per finished phase)
       for (const required of [
         "phase", "gap_opened", "gap_claimed", "node_added", "finding_merged",
-        "edge_added", "coverage", "gap_filled", "report", "done",
+        "edge_added", "coverage", "gap_filled", "report", "done", "budget",
       ]) {
         expect(names).toContain(required);
       }
+      const budgets = events.filter((e) => e.event === "budget");
+      for (const b of budgets) {
+        if (b.event === "budget") {
+          expect(b.max).not.toBeNull();
+          expect(b.used).toBeLessThanOrEqual(b.max as number);
+        }
+      }
+      const used = budgets.map((b) => (b.event === "budget" ? b.used : 0));
+      expect([...used].sort((a, z) => a - z)).toEqual(used); // non-decreasing
       const last = events[events.length - 1];
       expect(last.event).toBe("done");
       if (last.event === "done") {

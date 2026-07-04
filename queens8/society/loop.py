@@ -18,6 +18,9 @@ partial report. There is NO round-count proxy — the counter is the ground trut
 
 SSE: all 11 frozen frames (§8.2) are emitted via an optional `on_event` hook;
 `node_added`/`edge_added` are synthesized from gaps + findings (KG stays OFF).
+Additive 12th frame `budget` {used, max, phase, round} follows each finished
+phase — phases run sequentially, so frame-to-frame deltas are exact per-role
+LLM-call costs (researchers gather concurrently and are reported as one phase).
 """
 
 from __future__ import annotations
@@ -103,12 +106,19 @@ async def run_society(
     def _over_budget() -> bool:
         return max_calls is not None and llm_calls() >= max_calls
 
+    async def _emit_budget(phase: str, round_: int) -> None:
+        # Additive frame (not in the frozen 11): one per finished phase. Phases
+        # run sequentially, so deltas between frames are exact per-role costs.
+        await _emit("budget", {"used": llm_calls(), "max": max_calls,
+                               "phase": phase, "round": round_})
+
     try:
         # --- Planner.seed → phase(seeding) + gap_opened/node_added per gap -----
         await _emit("phase", {"phase": "seeding", "round": 0})
         planner = Planner(store, org_id=org_id, project_id=project_id, kb_id=kb_id,
                           cfg=cfg, on_event=on_event)
         await planner.seed(topic)
+        await _emit_budget("seeding", 0)
 
         rounds = 0
         last_progress = -1
@@ -142,12 +152,14 @@ async def run_society(
                     await _emit("error", {"error": f"researcher {rid}: {exc}", "fatal": False})
 
             await asyncio.gather(*[_drain(r) for r in researchers])
+            await _emit_budget("researching", rounds)
 
             await _emit("phase", {"phase": "critiquing", "round": rounds})
             critic = Critic(store, kb_id=kb_id, cfg=cfg, max_attempts=max_attempts,
                             spawn_budget=spawn_budget, on_event=on_event)
             await critic.review()
             spawn_budget = critic.spawn_budget  # carry the decremented budget forward
+            await _emit_budget("critiquing", rounds)
 
             # Guard (c): no improvement on the monotonic scalar across a full sweep.
             prog = _progress(store, kb_id)
@@ -158,6 +170,7 @@ async def run_society(
         await _emit("phase", {"phase": "synthesizing", "round": rounds})
         synth = Synthesizer(store, kb_id=kb_id, cfg=cfg, on_event=on_event)
         report, unanswered = await synth.run(topic)
+        await _emit_budget("synthesizing", rounds)
 
         gaps = list_gaps(store, kb_id)
         findings_after = store.count_findings(kb_id)
