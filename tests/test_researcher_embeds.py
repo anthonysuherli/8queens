@@ -11,11 +11,11 @@ import tempfile
 
 import pytest
 
-from qwen8.core.config import get_config
-from qwen8.core.exploration.models import Finding
-from qwen8.store import get_store
-from qwen8.society import roles as roles_mod
-from qwen8.society.blackboard import create_gaps
+from queens8.core.config import get_config
+from queens8.core.exploration.models import Finding
+from queens8.store import get_store
+from queens8.society import roles as roles_mod
+from queens8.society.blackboard import create_gaps
 
 
 @pytest.mark.asyncio
@@ -25,7 +25,7 @@ async def test_researcher_step_embeds_into_vec_findings(monkeypatch):
     similarity >= band1_min (proving vectors were inserted).
     """
     d = tempfile.mkdtemp()
-    store = get_store(db_path=os.path.join(d, "qwen8.db"))
+    store = get_store(db_path=os.path.join(d, "queens8.db"))
     create_gaps(store, "kb1", "proj1", ["What is the capital of France?"])
 
     # Engine returns dict-content, UNEMBEDDED Finding objects.

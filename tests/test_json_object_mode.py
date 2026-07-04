@@ -13,9 +13,9 @@ import inspect
 import pytest
 from pydantic import BaseModel
 
-import qwen8.core.clients.ai_gateway as ag
-from qwen8.core.exploration import extractor as extractor_mod
-from qwen8.core.exploration import planner as planner_mod
+import queens8.core.clients.ai_gateway as ag
+from queens8.core.exploration import extractor as extractor_mod
+from queens8.core.exploration import planner as planner_mod
 
 
 class _Tiny(BaseModel):

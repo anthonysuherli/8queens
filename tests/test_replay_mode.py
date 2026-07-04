@@ -14,9 +14,9 @@ import tempfile
 
 import pytest
 
-from qwen8.store.sqlite import SQLiteStore
-from qwen8.society.blackboard import create_gaps, complete_gap
-from qwen8.api.routes_society import replay_events
+from queens8.store.sqlite import SQLiteStore
+from queens8.society.blackboard import create_gaps, complete_gap
+from queens8.api.routes_society import replay_events
 
 
 def _drain(agen):
@@ -27,7 +27,7 @@ def _drain(agen):
 
 def test_replay_reemits_named_frames_offline():
     tmp = tempfile.mkdtemp()
-    db_path = os.path.join(tmp, "qwen8.db")
+    db_path = os.path.join(tmp, "queens8.db")
     store = SQLiteStore(db_path=db_path)
     kb_id, project_id, org_id = "kb1", "p1", "local"
 
@@ -60,7 +60,7 @@ def test_replay_reemits_named_frames_offline():
 def test_replay_frame_ordering_per_gap():
     """Per-gap ordering: gap_opened → gap_claimed → finding_merged* → gap_filled → coverage."""
     tmp = tempfile.mkdtemp()
-    db_path = os.path.join(tmp, "qwen8.db")
+    db_path = os.path.join(tmp, "queens8.db")
     store = SQLiteStore(db_path=db_path)
     kb_id, project_id, org_id = "kb2", "p2", "local"
 
@@ -92,7 +92,7 @@ def test_replay_frame_ordering_per_gap():
 def test_replay_final_frames_are_report_then_done():
     """report must immediately precede done as the last two frames."""
     tmp = tempfile.mkdtemp()
-    db_path = os.path.join(tmp, "qwen8.db")
+    db_path = os.path.join(tmp, "queens8.db")
     store = SQLiteStore(db_path=db_path)
     kb_id, project_id, org_id = "kb3", "p3", "local"
 

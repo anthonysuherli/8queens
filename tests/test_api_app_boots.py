@@ -4,21 +4,21 @@ from __future__ import annotations
 
 
 def test_app_imports_without_concept_doc_crash():
-    import qwen8.api.main as m
+    import queens8.api.main as m
 
-    assert m.app.title == "qwen8"
+    assert m.app.title == "queens8"
 
 
 def test_no_concept_doc_route():
-    import qwen8.api.main as m
+    import queens8.api.main as m
 
     paths = {r.path for r in m.app.routes if hasattr(r, "path")}
     assert not any("concept-doc" in p for p in paths)
 
 
 def test_missing_keys_does_not_require_openai(monkeypatch):
-    import qwen8.api.routes_explore as rx
-    from qwen8.core.config import get_settings
+    import queens8.api.routes_explore as rx
+    from queens8.core.config import get_settings
 
     get_settings.cache_clear()
     monkeypatch.setenv("AI_GATEWAY_API_KEY", "k")

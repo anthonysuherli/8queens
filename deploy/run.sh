@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# deploy/run.sh — qwen8 → Alibaba Cloud ECS (Singapore, ap-southeast-1).
+# deploy/run.sh — 8queens → Alibaba Cloud ECS (Singapore, ap-southeast-1).
 # Usage:
-#   ACR=<registry>/qwen8 TAG=demo \
+#   ACR=<registry>/queens8 TAG=demo \
 #   ECS_IP=<public-ip> ECS_USER=root \
-#   DASHSCOPE_API_KEY=... TAVILY_API_KEY=... QWEN8_SOCIETY_SECRET=... \
-#   QWEN8_CORS_ORIGINS=<frontend/ECS origin or *> \   # optional; defaults to '*'
+#   DASHSCOPE_API_KEY=... TAVILY_API_KEY=... QUEENS8_SOCIETY_SECRET=... \
+#   QUEENS8_CORS_ORIGINS=<frontend/ECS origin or *> \   # optional; defaults to '*'
 #   bash deploy/run.sh all          # build → push → deploy
 #   bash deploy/run.sh build        # local linux/amd64 image only
 #   bash deploy/run.sh push         # docker login + push to ACR
 #   bash deploy/run.sh deploy       # ssh ECS: pull + run
 set -euo pipefail
 
-ACR="${ACR:?set ACR=<registry>/qwen8}"
+ACR="${ACR:?set ACR=<registry>/queens8}"
 TAG="${TAG:-demo}"
 IMAGE="${ACR}:${TAG}"
 GATEWAY_BASE_URL="${AI_GATEWAY_BASE_URL:-https://dashscope-intl.aliyuncs.com/compatible-mode/v1}"
 # Browser→ECS is cross-origin; the deployed frontend origin (or '*' for the demo)
-# must reach the FastAPI CORS allow-list. main.py reads it from QWEN8_CORS_ORIGINS.
-CORS_ORIGINS="${QWEN8_CORS_ORIGINS:-*}"
+# must reach the FastAPI CORS allow-list. main.py reads it from QUEENS8_CORS_ORIGINS.
+CORS_ORIGINS="${QUEENS8_CORS_ORIGINS:-*}"
 
 build() {
   docker buildx build --platform linux/amd64 -t "${IMAGE}" --load .
@@ -32,22 +32,22 @@ push() {
 deploy() {
   : "${ECS_IP:?set ECS_IP}" "${ECS_USER:?set ECS_USER}"
   : "${DASHSCOPE_API_KEY:?set DASHSCOPE_API_KEY}" "${TAVILY_API_KEY:?set TAVILY_API_KEY}"
-  : "${QWEN8_SOCIETY_SECRET:?set QWEN8_SOCIETY_SECRET}"
+  : "${QUEENS8_SOCIETY_SECRET:?set QUEENS8_SOCIETY_SECRET}"
   ssh "${ECS_USER}@${ECS_IP}" bash -s <<EOF
 set -euo pipefail
 docker pull "${IMAGE}"
-docker rm -f qwen8 2>/dev/null || true
+docker rm -f queens8 2>/dev/null || true
 mkdir -p /data
-docker run -d --name qwen8 -p 80:8001 -v /data:/data \\
+docker run -d --name queens8 -p 80:8001 -v /data:/data \\
   -e AI_GATEWAY_API_KEY="${DASHSCOPE_API_KEY}" \\
   -e AI_GATEWAY_BASE_URL="${GATEWAY_BASE_URL}" \\
   -e TAVILY_API_KEY="${TAVILY_API_KEY}" \\
-  -e QWEN8_DB_PATH=/data/qwen8.db \\
-  -e QWEN8_SOCIETY_SECRET="${QWEN8_SOCIETY_SECRET}" \\
-  -e QWEN8_CORS_ORIGINS="${CORS_ORIGINS}" \\
+  -e QUEENS8_DB_PATH=/data/queens8.db \\
+  -e QUEENS8_SOCIETY_SECRET="${QUEENS8_SOCIETY_SECRET}" \\
+  -e QUEENS8_CORS_ORIGINS="${CORS_ORIGINS}" \\
   "${IMAGE}"
 sleep 3
-docker ps --filter name=qwen8
+docker ps --filter name=queens8
 EOF
 }
 

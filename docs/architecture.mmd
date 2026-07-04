@@ -2,7 +2,7 @@ flowchart TB
   browser["Browser / judge<br/>(sigma.js dashboard)"]
   subgraph cloud["Alibaba Cloud — Singapore (ap-southeast-1)"]
     subgraph ecs["ECS instance"]
-      subgraph api["qwen8 FastAPI / uvicorn (:8001, host 0.0.0.0)"]
+      subgraph api["8queens FastAPI / uvicorn (:8001, host 0.0.0.0)"]
         routes["POST /api/projects/{p}/kbs/{k}/society/start<br/>GET  /…/society/stream (SSE)<br/>GET  /…/society/state<br/>GET  /…/graph · /…/findings · /…/resume<br/>GET  /api/projects · GET /health"]
       end
       subgraph loop["BLACKBOARD LOOP (run_society)"]
@@ -17,7 +17,7 @@ flowchart TB
         findings["findings + vec_findings (dedup, 1536-dim)"]
         kg["kg_nodes / kg_edges / kg_schemas (incremental KG)"]
         meta["kb_synopsis · explorations · gaps (NEW table)"]
-        db["SQLite + sqlite-vec → /data/qwen8.db"]
+        db["SQLite + sqlite-vec → /data/queens8.db"]
         findings --- db
         kg --- db
         meta --- db

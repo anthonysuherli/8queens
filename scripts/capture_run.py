@@ -3,7 +3,7 @@
     python -m scripts.capture_run "What is the stablecoin landscape in 2026?" \
         frontend/src/trace/fixtures/sample.json
 
-Heavy qwen8.* imports live INSIDE capture() so this module imports cleanly
+Heavy queens8.* imports live INSIDE capture() so this module imports cleanly
 (no keys/deps) for unit tests of the pure assembly helpers.
 """
 
@@ -69,11 +69,11 @@ async def capture(
     kb: str = "trace-demo",
     content_cap: int = 1500,
 ) -> dict:
-    from qwen8.core.config import get_config
-    from qwen8.society import run_society
-    from qwen8.society.blackboard import list_gaps
-    from qwen8.society.loop import bootstrap_society
-    from qwen8.store import get_store
+    from queens8.core.config import get_config
+    from queens8.society import run_society
+    from queens8.society.blackboard import list_gaps
+    from queens8.society.loop import bootstrap_society
+    from queens8.store import get_store
 
     cfg = get_config()
     store = get_store(db_path=None)

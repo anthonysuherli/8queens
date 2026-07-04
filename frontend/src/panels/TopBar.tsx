@@ -45,7 +45,7 @@ export function TopBar() {
     <header className="tb">
       <div className="tb-brand">
         <span className="tb-wordmark">
-          QWEN8<span className="tb-eight">_8</span>
+          QUEENS8<span className="tb-eight">_8</span>
         </span>
         <span className="tb-sub">knowledge graph control</span>
       </div>

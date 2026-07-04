@@ -1,0 +1,73 @@
+{
+ "title": "The state of open-weight LLMs in 2026",
+ "subtitle": "The state of open-weight LLMs in 2026: who leads on benchmarks, licensing, and real-world…",
+ "meta": [
+  "8queens society run",
+  "579 findings · 4 gaps · 1 round(s)"
+ ],
+ "seal": "议",
+ "report_md": "report.md",
+ "out": "The-state-of-open-weight-LLMs-in-2026-society.docx",
+ "figures": [
+  {
+   "id": "flow",
+   "type": "flow",
+   "after_heading": "TOP",
+   "title": "How the 8queens society built this",
+   "stages": [
+    {
+     "text": "Topic",
+     "role": "accent"
+    },
+    {
+     "text": "Planner\ndecompose",
+     "role": "process"
+    },
+    {
+     "text": "Researchers\nsearch + extract",
+     "role": "process"
+    },
+    {
+     "text": "Critic\nre-band",
+     "role": "decision"
+    },
+    {
+     "text": "Synthesizer\nreport",
+     "role": "terminal"
+    }
+   ],
+   "feedback": {
+    "from": 3,
+    "to": 2,
+    "label": "reopen if sparse/gap"
+   },
+   "caption": "Figure 1. A planner opens gaps on a shared blackboard, researchers fill them from the web, a critic re-bands coverage and reopens weak gaps, and a synthesizer writes the report once coverage is rich."
+  },
+  {
+   "id": "per_gap",
+   "type": "hbar",
+   "after_heading": "TOP",
+   "title": "Findings merged per research gap",
+   "xlabel": "findings (coverage-banded)",
+   "labels": [
+    "Which organizations or companies are lead…",
+    "What are the most significant benchmarks…",
+    "How do licensing models for open-weight L…",
+    "What are the primary real-world applicati…"
+   ],
+   "values": [
+    123,
+    141,
+    161,
+    154
+   ],
+   "colors": [
+    "#16A951",
+    "#16A951",
+    "#16A951",
+    "#16A951"
+   ],
+   "caption": "Figure 2. Findings the society merged per gap, colored by final coverage (green rich · gold sparse · red gap)."
+  }
+ ]
+}

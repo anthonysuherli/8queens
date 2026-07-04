@@ -1,4 +1,4 @@
-"""TDD tests for qwen8.society.roles — Planner / Researcher / Critic / Synthesizer.
+"""TDD tests for queens8.society.roles — Planner / Researcher / Critic / Synthesizer.
 
 All LLM + engine calls are monkeypatched so no live API key is needed.
 Uses a FILE-BACKED temp DB (never :memory:) per the repo convention.
@@ -10,16 +10,16 @@ import tempfile
 
 import pytest
 
-from qwen8.core.config import get_config
-from qwen8.store import get_store
-from qwen8.society import roles as roles_mod
-from qwen8.society.blackboard import claim_gap, complete_gap, create_gaps, list_gaps
+from queens8.core.config import get_config
+from queens8.store import get_store
+from queens8.society import roles as roles_mod
+from queens8.society.blackboard import claim_gap, complete_gap, create_gaps, list_gaps
 
 
 @pytest.fixture
 def store():
     d = tempfile.mkdtemp()
-    s = get_store(db_path=os.path.join(d, "qwen8.db"))
+    s = get_store(db_path=os.path.join(d, "queens8.db"))
     yield s
     s.close()
 
@@ -93,7 +93,7 @@ async def test_researcher_step_persists_findings_and_emits_events(monkeypatch, s
     - findings are embedded+inserted so a second match_findings would find them
     - on_event receives gap_claimed / finding_merged / node_added / edge_added / coverage / gap_filled
     """
-    from qwen8.core.exploration.engine import Finding
+    from queens8.core.exploration.engine import Finding
 
     create_gaps(store, "kb1", "proj1", ["What is Y?"])
     cfg = get_config()
@@ -218,7 +218,7 @@ async def test_researcher_rich_skip_does_not_fire_on_sharpen(monkeypatch, store)
     # Manually mark gap as reason='sharpen' after claim
     g = claim_gap(store, "kb1", owner="setup")
     # reopen with reason='sharpen' so it's back open
-    from qwen8.society.blackboard import reopen_gap
+    from queens8.society.blackboard import reopen_gap
     complete_gap(store, g.id, [], coverage="sparse", band1_hits=0, status="verified")
     reopen_gap(store, g.id, coverage="sparse", reason="sharpen", question="Sharpened?")
 

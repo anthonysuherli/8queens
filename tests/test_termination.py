@@ -1,4 +1,4 @@
-"""TDD tests for qwen8.society.loop termination pathologies.
+"""TDD tests for queens8.society.loop termination pathologies.
 
 Tests three critical termination scenarios:
   (1) Perpetually-sparse: gaps never reach rich, defeated by attempts cap + guard (c)
@@ -15,10 +15,10 @@ import tempfile
 
 import pytest
 
-from qwen8.core.config import get_config
-from qwen8.store import get_store
-from qwen8.society import loop as loop_mod
-from qwen8.society.blackboard import (
+from queens8.core.config import get_config
+from queens8.store import get_store
+from queens8.society import loop as loop_mod
+from queens8.society.blackboard import (
     claim_gap,
     complete_gap,
     create_gaps,
@@ -30,10 +30,10 @@ from qwen8.society.blackboard import (
 def _seed_env(monkeypatch):
     """Create a temp DB and wire the env."""
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "qwen8.db")
-    monkeypatch.setenv("QWEN8_DB_PATH", path)
+    path = os.path.join(d, "queens8.db")
+    monkeypatch.setenv("QUEENS8_DB_PATH", path)
     # Clear cached store so monkeypatched env is used
-    from qwen8.store import _local_stores
+    from queens8.store import _local_stores
     _local_stores.clear()
     return get_store(db_path=path)
 
@@ -213,7 +213,7 @@ async def test_kill_switch_counter_halts(monkeypatch):
     gaps never converge. We monkeypatch the LLM seam to count up (like the
     counter does for real) and pin max_llm_calls_per_run low so it must trip.
     """
-    import qwen8.core.clients.ai_gateway as ag
+    import queens8.core.clients.ai_gateway as ag
 
     store = _seed_env(monkeypatch)
 

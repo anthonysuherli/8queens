@@ -10,8 +10,8 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_build_uses_text_completion_not_langchain(monkeypatch):
-    import qwen8.core.agent.synopsis as syn
-    from qwen8.core.config import get_config
+    import queens8.core.agent.synopsis as syn
+    from queens8.core.config import get_config
 
     captured = {}
 
@@ -28,7 +28,7 @@ async def test_build_uses_text_completion_not_langchain(monkeypatch):
 def test_no_langchain_import():
     import inspect
 
-    import qwen8.core.agent.synopsis as syn
+    import queens8.core.agent.synopsis as syn
 
     src = inspect.getsource(syn)
     assert "chat_model" not in src
@@ -38,13 +38,13 @@ def test_no_langchain_import():
 @pytest.mark.asyncio
 async def test_maybe_rebuild_synopsis_writes_row():
     """maybe_rebuild_synopsis writes a kb_synopsis row using a file-backed DB."""
-    import qwen8.core.agent.synopsis as syn
-    from qwen8.core.config import get_config
-    from qwen8.store.sqlite import SQLiteStore
+    import queens8.core.agent.synopsis as syn
+    from queens8.core.config import get_config
+    from queens8.store.sqlite import SQLiteStore
 
     # Use a temp file-backed DB (never :memory:)
     tmp_dir = tempfile.mkdtemp()
-    db_path = os.path.join(tmp_dir, "qwen8_test.db")
+    db_path = os.path.join(tmp_dir, "queens8_test.db")
 
     store = SQLiteStore(db_path)
     oid, pid = store.resolve_project("test_synopsis", create=True)

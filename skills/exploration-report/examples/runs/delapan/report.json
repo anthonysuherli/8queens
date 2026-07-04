@@ -1,0 +1,66 @@
+{
+ "title": "Open-Weight LLM Landscape 2026",
+ "subtitle": "From the delapan knowledge-engine / ai-tooling-landscape KB",
+ "meta": [
+  "delapan KB · 30 findings",
+  "4 categories"
+ ],
+ "seal": "识",
+ "report_md": "report.md",
+ "out": "Open-Weight-LLM-Landscape-2026-delapan.docx",
+ "figures": [
+  {
+   "id": "flow",
+   "type": "flow",
+   "after_heading": "TOP",
+   "title": "How delapan built this KB",
+   "stages": [
+    {
+     "text": "Prompt",
+     "role": "accent"
+    },
+    {
+     "text": "Plan",
+     "role": "process"
+    },
+    {
+     "text": "Search",
+     "role": "process"
+    },
+    {
+     "text": "Crawl",
+     "role": "process"
+    },
+    {
+     "text": "Extract",
+     "role": "process"
+    },
+    {
+     "text": "Merge\ndedupe",
+     "role": "terminal"
+    }
+   ],
+   "caption": "Figure 1. delapan's exploration pipeline: plan → search → crawl → extract → merge into deduplicated, embedded findings."
+  },
+  {
+   "id": "by_cat",
+   "type": "hbar",
+   "after_heading": "TOP",
+   "title": "Findings by category",
+   "xlabel": "findings",
+   "labels": [
+    "Licensing Terms",
+    "Benchmark Performance",
+    "Licensing",
+    "Model Release"
+   ],
+   "values": [
+    1,
+    8,
+    3,
+    18
+   ],
+   "caption": "Figure 2. Distribution of merged findings across categories in the KB."
+  }
+ ]
+}

@@ -66,7 +66,7 @@ export type FindingCacheEntry =
   | { status: "error"; message: string }
   | { status: "ready"; data: Finding };
 
-const SCOPE_KEY = "qwen8.scope";
+const SCOPE_KEY = "queens8.scope";
 
 interface AppState {
   mode: api.ApiMode;

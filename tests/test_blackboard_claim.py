@@ -13,9 +13,9 @@ import tempfile
 
 import pytest
 
-from qwen8.store import get_store
-from qwen8.store.sqlite import SQLiteStore
-from qwen8.society.blackboard import claim_gap, create_gaps, list_gaps
+from queens8.store import get_store
+from queens8.store.sqlite import SQLiteStore
+from queens8.society.blackboard import claim_gap, create_gaps, list_gaps
 
 
 @pytest.mark.asyncio
@@ -26,7 +26,7 @@ async def test_one_open_gap_yields_exactly_one_winner():
     before calling claim_gap synchronously. Exactly one should claim the gap.
     """
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "qwen8.db")
+    path = os.path.join(d, "queens8.db")
     store = get_store(db_path=path)
     create_gaps(store, "kb1", "proj1", ["only one open gap"])
 
@@ -56,7 +56,7 @@ async def test_two_connections_same_file_one_winner():
     multi-connection atomicity of the claim_gap UPDATE ... WHERE ... LIMIT 1 query.
     """
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "qwen8.db")
+    path = os.path.join(d, "queens8.db")
 
     s1 = SQLiteStore(db_path=path)
     s2 = SQLiteStore(db_path=path)

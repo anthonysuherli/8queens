@@ -5,8 +5,8 @@ import tempfile
 
 import pytest
 
-from qwen8.store import get_store
-from qwen8.society.blackboard import (
+from queens8.store import get_store
+from queens8.society.blackboard import (
     Gap,
     claim_gap,
     complete_gap,
@@ -19,7 +19,7 @@ from qwen8.society.blackboard import (
 @pytest.fixture
 def store():
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "qwen8.db")
+    path = os.path.join(d, "queens8.db")
     s = get_store(db_path=path)
     yield s
     s.close()

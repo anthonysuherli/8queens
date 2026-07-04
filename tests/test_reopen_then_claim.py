@@ -11,11 +11,11 @@ import tempfile
 
 import pytest
 
-from qwen8.core.config import get_config
-from qwen8.core.exploration.models import Finding
-from qwen8.store import get_store
-from qwen8.society import roles as roles_mod
-from qwen8.society.blackboard import claim_gap, complete_gap, create_gaps, reopen_gap
+from queens8.core.config import get_config
+from queens8.core.exploration.models import Finding
+from queens8.store import get_store
+from queens8.society import roles as roles_mod
+from queens8.society.blackboard import claim_gap, complete_gap, create_gaps, reopen_gap
 
 
 @pytest.mark.asyncio
@@ -26,7 +26,7 @@ async def test_sharpen_reopen_reruns_exploration(monkeypatch):
     the new question to run_exploration.
     """
     d = tempfile.mkdtemp()
-    store = get_store(db_path=os.path.join(d, "qwen8.db"))
+    store = get_store(db_path=os.path.join(d, "queens8.db"))
     create_gaps(store, "kb1", "proj1", ["Broad question?"])
     g = claim_gap(store, "kb1", owner="r1")
     complete_gap(

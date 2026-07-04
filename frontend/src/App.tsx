@@ -38,7 +38,7 @@ export default function App() {
     return (
       <div className="boot">
         <div className="boot-wordmark">
-          QWEN8<span>_8</span>
+          QUEENS8<span>_8</span>
         </div>
         {bootError ? (
           <>

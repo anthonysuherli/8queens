@@ -1,4 +1,4 @@
-import qwen8.core.clients.embeddings as emb_mod
+import queens8.core.clients.embeddings as emb_mod
 
 
 class _FakeData:

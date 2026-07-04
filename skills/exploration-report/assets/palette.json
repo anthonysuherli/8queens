@@ -1,0 +1,41 @@
+{
+  "_note": "Retrofuturistic 中国传统色 (traditional Chinese color) theme. Hexes are the de-facto web-standard zhongguose set; adversarially fact-checked (群青/赤金 chosen over disputed 石青/明黄). Vibrant-yet-LIGHT: warm paper ground, saturated accents.",
+  "roles": {
+    "page_bg":       {"zh": "缟",   "pinyin": "gǎo",        "en": "silk off-white",      "hex": "#F2ECDE"},
+    "page_bg_ivory": {"zh": "象牙白","pinyin": "xiàngyábái", "en": "ivory",               "hex": "#FFFBF0"},
+    "surface":       {"zh": "牙",   "pinyin": "yá",         "en": "ivory panel",         "hex": "#EEDEB0"},
+    "ink":           {"zh": "墨",   "pinyin": "mò",         "en": "slate ink",           "hex": "#50616D"},
+    "heading":       {"zh": "黛",   "pinyin": "dài",        "en": "ink blue-black",      "hex": "#4A4266"},
+    "seal_red":      {"zh": "朱砂", "pinyin": "zhūshā",     "en": "cinnabar seal red",   "hex": "#FF461F"},
+    "banner_red":    {"zh": "朱红", "pinyin": "zhūhóng",    "en": "vermilion",           "hex": "#FF4C00"},
+    "azure":         {"zh": "群青", "pinyin": "qúnqīng",    "en": "azure",               "hex": "#4C8DAE"},
+    "deep_blue":     {"zh": "靛",   "pinyin": "diàn",       "en": "deep indigo",         "hex": "#065279"},
+    "jade":          {"zh": "碧色", "pinyin": "bìsè",       "en": "bright jade",         "hex": "#1BD1A5"},
+    "gold":          {"zh": "赤金", "pinyin": "chìjīn",     "en": "red-gold",            "hex": "#F2BE45"},
+    "success":       {"zh": "石绿", "pinyin": "shílǜ",      "en": "malachite green",     "hex": "#16A951"},
+    "warning":       {"zh": "藤黄", "pinyin": "ténghuáng",  "en": "gamboge",             "hex": "#FFB61E"},
+    "danger":        {"zh": "朱红", "pinyin": "zhūhóng",    "en": "vermilion",           "hex": "#FF4C00"},
+    "muted":         {"zh": "苍色", "pinyin": "cāngsè",     "en": "grey-cyan",           "hex": "#75878A"},
+    "hairline":      {"zh": "黛蓝", "pinyin": "dàilán",     "en": "slate blue",          "hex": "#425066"},
+    "row_tint":      {"zh": "月白", "pinyin": "yuèbái",     "en": "moon-white",          "hex": "#D6ECF0"},
+    "deep_seal":     {"zh": "银朱", "pinyin": "yínzhū",     "en": "silver-cinnabar",     "hex": "#BF242A"}
+  },
+  "series":       ["#4C8DAE", "#FF4C00", "#16A951", "#F2BE45", "#8C4356", "#789262", "#B35C44", "#4A4266"],
+  "series_names": ["群青 azure", "朱红 vermilion", "石绿 malachite", "赤金 gold", "绛紫 crimson", "竹青 bamboo", "茶色 tea", "黛 ink"],
+  "flow": {
+    "process":  {"fill": "#D6ECF0", "border": "#4C8DAE", "text": "#3D3D3D"},
+    "terminal": {"fill": "#16A951", "border": "#0E7C3A", "text": "#FFFFFF"},
+    "decision": {"fill": "#FFB61E", "border": "#C98A12", "text": "#3D3D3D"},
+    "error":    {"fill": "#FF4C00", "border": "#B5360A", "text": "#FFFFFF"},
+    "accent":   {"fill": "#4C8DAE", "border": "#2F6A86", "text": "#FFFFFF"},
+    "arrow":    "#4A4266"
+  },
+  "chart": {
+    "fig_bg":  "#F2ECDE",
+    "axes_bg": "#FFFFFF",
+    "grid":    "#E0E0E0",
+    "label":   "#3D3D3D",
+    "spine":   "#50616D",
+    "outline": "#4A4266"
+  }
+}

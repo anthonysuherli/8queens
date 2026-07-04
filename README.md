@@ -1,4 +1,4 @@
-# qwen8 — Agent Society with a Shared Brain
+# 8queens — Agent Society with a Shared Brain
 
 Open-domain deep-research **agent society**: role-specialized Qwen agents
 (Planner / Researcher×N / Critic / Synthesizer) collaborate not by passing
@@ -15,16 +15,16 @@ consuming Qwen exclusively through DashScope's OpenAI-compatible endpoint.
 
 ## Architecture
 
-![qwen8 architecture](docs/architecture.png)
+![8queens architecture](docs/architecture.png)
 
 ## Proof of Alibaba Cloud
 
 Qwen is consumed via DashScope (Model Studio), Alibaba's managed model service:
 
-- [`qwen8/core/clients/ai_gateway.py`](qwen8/core/clients/ai_gateway.py) — the single
+- [`queens8/core/clients/ai_gateway.py`](queens8/core/clients/ai_gateway.py) — the single
   LLM seam (`structured_completion` / `text_completion`) over DashScope's
   OpenAI-compatible endpoint.
-- [`qwen8/core/config.py`](qwen8/core/config.py) — DashScope base URL + Qwen
+- [`queens8/core/config.py`](queens8/core/config.py) — DashScope base URL + Qwen
   model defaults (`qwen-max`/`qwen-plus`/`qwen-flash`/`qwen-long`,
   `text-embedding-v4@1536`).
 - [`Dockerfile`](Dockerfile) + [`deploy/run.sh`](deploy/run.sh) — build for
@@ -35,8 +35,8 @@ Qwen is consumed via DashScope (Model Studio), Alibaba's managed model service:
 ```bash
 pip install -e .[local]
 cp .env.example .env   # fill AI_GATEWAY_API_KEY (DashScope key), AI_GATEWAY_BASE_URL,
-                       # TAVILY_API_KEY, QWEN8_DB_PATH, QWEN8_SOCIETY_SECRET
-uvicorn qwen8.api.main:app --host 0.0.0.0 --port 8001
+                       # TAVILY_API_KEY, QUEENS8_DB_PATH, QUEENS8_SOCIETY_SECRET
+uvicorn queens8.api.main:app --host 0.0.0.0 --port 8001
 ```
 
 Then start a run (the write route is gated by `X-Society-Secret`):
@@ -63,9 +63,9 @@ the knowledge graph and findings as the society runs.
 ## Deploy to Alibaba Cloud ECS
 
 ```bash
-ACR=<registry>/qwen8 TAG=demo ECS_IP=<ip> ECS_USER=root \
+ACR=<registry>/queens8 TAG=demo ECS_IP=<ip> ECS_USER=root \
 ACR_USER=... ACR_PASSWORD=... \
-DASHSCOPE_API_KEY=... TAVILY_API_KEY=... QWEN8_SOCIETY_SECRET=... \
+DASHSCOPE_API_KEY=... TAVILY_API_KEY=... QUEENS8_SOCIETY_SECRET=... \
 bash deploy/run.sh all
 curl http://<ECS_PUBLIC_IP>/health   # {"status":"ok","backend":"sqlite"}
 ```

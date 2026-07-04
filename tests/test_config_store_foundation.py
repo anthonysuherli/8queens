@@ -2,12 +2,12 @@ import os
 import sqlite3
 import tempfile
 
-from qwen8.core.config import SocietyConfig, _ENV_PREFIX, assert_qwen8_runtime, get_config
-from qwen8.store.sqlite import SQLiteStore
+from queens8.core.config import SocietyConfig, _ENV_PREFIX, assert_queens8_runtime, get_config
+from queens8.store.sqlite import SQLiteStore
 
 
 def test_env_prefix_renamed():
-    assert _ENV_PREFIX == "QWEN8_"
+    assert _ENV_PREFIX == "QUEENS8_"
 
 
 def test_society_config_defaults():
@@ -33,9 +33,9 @@ def test_gaps_table_in_schema():
 
 
 def test_startup_assertions_pass(monkeypatch, tmp_path):
-    # db_path must contain ".qwen8" to satisfy assert_qwen8_runtime's scope check.
-    qwen8_dir = tmp_path / ".qwen8"
-    qwen8_dir.mkdir()
-    monkeypatch.setenv("QWEN8_DB_PATH", str(qwen8_dir / "qwen8.db"))
+    # db_path must contain ".queens8" to satisfy assert_queens8_runtime's scope check.
+    queens8_dir = tmp_path / ".queens8"
+    queens8_dir.mkdir()
+    monkeypatch.setenv("QUEENS8_DB_PATH", str(queens8_dir / "queens8.db"))
     get_config.cache_clear()
-    assert_qwen8_runtime()  # must not raise
+    assert_queens8_runtime()  # must not raise

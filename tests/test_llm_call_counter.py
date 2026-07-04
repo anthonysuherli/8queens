@@ -1,4 +1,4 @@
-import qwen8.core.clients.ai_gateway as ag
+import queens8.core.clients.ai_gateway as ag
 from pydantic import BaseModel
 
 

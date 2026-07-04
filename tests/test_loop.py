@@ -1,4 +1,4 @@
-"""TDD tests for qwen8.society.loop — run_society + SocietyResult + bootstrap_society.
+"""TDD tests for queens8.society.loop — run_society + SocietyResult + bootstrap_society.
 
 Guards tested:
   (a) nominal run completes and returns a SocietyResult with all done gaps
@@ -17,10 +17,10 @@ import tempfile
 
 import pytest
 
-from qwen8.core.config import get_config
-from qwen8.store import get_store
-from qwen8.society import loop as loop_mod
-from qwen8.society.blackboard import create_gaps, list_gaps
+from queens8.core.config import get_config
+from queens8.store import get_store
+from queens8.society import loop as loop_mod
+from queens8.society.blackboard import create_gaps, list_gaps
 
 
 # ---------------------------------------------------------------------------
@@ -46,7 +46,7 @@ class FakeResearcher:
         self.rid = researcher_id
 
     async def step(self):
-        from qwen8.society.blackboard import claim_gap, complete_gap
+        from queens8.society.blackboard import claim_gap, complete_gap
         g = claim_gap(self.store, self.kb_id, owner=self.rid)
         if g is None:
             return False
@@ -64,7 +64,7 @@ class FakeCritic:
     async def review(self):
         gs = list_gaps(self.store, self.kb_id, status="verified")
         for g in gs:
-            from qwen8.society.blackboard import complete_gap
+            from queens8.society.blackboard import complete_gap
             complete_gap(self.store, g.id, g.finding_ids, coverage="rich",
                          band1_hits=3, status="done")
         return len(gs)
@@ -87,10 +87,10 @@ def _patch_roles(monkeypatch):
 
 def _make_store(monkeypatch):
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "qwen8.db")
-    monkeypatch.setenv("QWEN8_DB_PATH", path)
+    path = os.path.join(d, "queens8.db")
+    monkeypatch.setenv("QUEENS8_DB_PATH", path)
     # Clear cached store so monkeypatched env is used
-    from qwen8.store import _local_stores
+    from queens8.store import _local_stores
     _local_stores.clear()
     store = get_store(db_path=path)
     return store, path
@@ -149,7 +149,7 @@ async def test_kill_switch_halts_when_llm_calls_exceed_cap(monkeypatch):
             self.rid = researcher_id
 
         async def step(self):
-            from qwen8.society.blackboard import claim_gap
+            from queens8.society.blackboard import claim_gap
             g = claim_gap(self.store, self.kb_id, owner=self.rid)
             if g is None:
                 return False
@@ -164,7 +164,7 @@ async def test_kill_switch_halts_when_llm_calls_exceed_cap(monkeypatch):
 
     # Make llm_calls() return a huge number immediately after reset, simulating
     # a previous high-spend run that should trip the guard.
-    import qwen8.core.clients.ai_gateway as gw_mod
+    import queens8.core.clients.ai_gateway as gw_mod
 
     original_llm_calls = gw_mod.llm_calls
 
@@ -212,7 +212,7 @@ async def test_max_rounds_terminates(monkeypatch):
             self.rid = researcher_id
 
         async def step(self):
-            from qwen8.society.blackboard import claim_gap, complete_gap
+            from queens8.society.blackboard import claim_gap, complete_gap
             g = claim_gap(self.store, self.kb_id, owner=self.rid)
             if g is None:
                 return False
@@ -229,7 +229,7 @@ async def test_max_rounds_terminates(monkeypatch):
 
         async def review(self):
             # Reopen all verified gaps so there's always active work
-            from qwen8.society.blackboard import reopen_gap
+            from queens8.society.blackboard import reopen_gap
             gs = list_gaps(self.store, self.kb_id, status="verified")
             for g in gs:
                 reopen_gap(self.store, g.id, coverage="sparse", reason="insufficient")
@@ -273,7 +273,7 @@ async def test_no_progress_scalar_halts(monkeypatch):
             self.rid = researcher_id
 
         async def step(self):
-            from qwen8.society.blackboard import claim_gap, complete_gap
+            from queens8.society.blackboard import claim_gap, complete_gap
             g = claim_gap(self.store, self.kb_id, owner=self.rid)
             if g is None:
                 return False
@@ -288,7 +288,7 @@ async def test_no_progress_scalar_halts(monkeypatch):
             self.spawn_budget = spawn_budget
 
         async def review(self):
-            from qwen8.society.blackboard import reopen_gap
+            from queens8.society.blackboard import reopen_gap
             gs = list_gaps(self.store, self.kb_id, status="verified")
             for g in gs:
                 reopen_gap(self.store, g.id, coverage="sparse", reason="insufficient")
@@ -436,7 +436,7 @@ async def test_one_researcher_failure_is_non_fatal(monkeypatch):
             self.researcher_id = researcher_id
 
         async def step(self):
-            from qwen8.society.blackboard import claim_gap
+            from queens8.society.blackboard import claim_gap
             g = claim_gap(self.store, self.kb_id, owner=self.rid)
             if g is None:
                 return False
@@ -452,7 +452,7 @@ async def test_one_researcher_failure_is_non_fatal(monkeypatch):
             self.rid = researcher_id
 
         async def step(self):
-            from qwen8.society.blackboard import claim_gap, complete_gap
+            from queens8.society.blackboard import claim_gap, complete_gap
             g = claim_gap(self.store, self.kb_id, owner=self.rid)
             if g is None:
                 return False

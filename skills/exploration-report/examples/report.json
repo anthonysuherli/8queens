@@ -1,0 +1,66 @@
+{
+  "title": "Open-Weight LLMs in 2026",
+  "subtitle": "Who leads on benchmarks, licensing, and adoption",
+  "meta": ["Deep-research report", "83 findings · 7 angles · adversarially fact-checked"],
+  "seal": "探",
+  "date": "June 2026",
+  "report_md": "open-weight-llms.md",
+  "out": "Open-Weight-LLMs-2026-themed.docx",
+  "figures": [
+    {
+      "id": "flow", "type": "flow", "after_heading": "TOP",
+      "title": "How this report was built",
+      "stages": [
+        {"text": "Topic", "role": "accent"},
+        {"text": "Plan\ndecompose", "role": "process"},
+        {"text": "Research\nweb search", "role": "process"},
+        {"text": "Critic\nfact-check", "role": "decision"},
+        {"text": "Synthesize\ncited report", "role": "terminal"}
+      ],
+      "feedback": {"from": 3, "to": 2, "label": "reopen if gap"},
+      "caption": "Figure 1. A multi-agent research society over a shared blackboard: the topic is decomposed into gaps, researchers fill them from the web, a critic re-bands coverage and reopens weak gaps, and a synthesizer writes the cited report once coverage is rich."
+    },
+    {
+      "id": "coding", "type": "hbar", "after_heading": "Benchmarks",
+      "title": "Coding — SWE-bench Verified", "xlabel": "SWE-bench Verified (%)", "highlight": 0,
+      "labels": ["DeepSeek V4 Pro", "GLM-4.7", "Qwen3-Coder 480B", "GLM-4.6", "DeepSeek V3.2", "Kimi K2"],
+      "values": [80.6, 73.8, 69.6, 68.0, 67.8, 65.8],
+      "caption": "Figure 2. Open-weight coding leaders on SWE-bench Verified. DeepSeek V4 Pro leads; all six are Chinese labs. Sources: model cards, llm-stats.com."
+    },
+    {
+      "id": "reasoning", "type": "grouped_bar", "after_heading": "Benchmarks",
+      "title": "Reasoning & math", "ylabel": "Score (%)",
+      "groups": ["Kimi K2 Thinking", "DeepSeek R1-0528", "Qwen3-235B Thinking"],
+      "series": [
+        {"name": "AIME 2025", "values": [94.5, 87.5, 92.3]},
+        {"name": "GPQA Diamond", "values": [84.5, 81.0, 81.1]}
+      ],
+      "caption": "Figure 3. Reasoning & math (AIME 2025, GPQA Diamond). GLM-5.2 separately leads knowledge at 91.2% GPQA. Sources: huggingface.co model cards, llm-stats.com."
+    },
+    {
+      "id": "licensing", "type": "hbar", "after_heading": "Licensing",
+      "title": "License permissiveness by family", "xlabel": "0 = non-commercial · 3 = truly permissive (Apache/MIT)",
+      "labels": ["Qwen3 (Apache-2.0)", "DeepSeek V3/R1 (MIT)", "GLM/Z.AI (MIT)", "Mistral (Apache-2.0)", "Kimi K2 (mod-MIT)", "MiniMax (mod-MIT)", "Llama 4 (Community)", "Gemma (ToU)", "Cohere Tiny Aya (CC-BY-NC)"],
+      "values": [3, 3, 3, 3, 2, 2, 1, 1, 0],
+      "colors": ["#16A951", "#16A951", "#16A951", "#16A951", "#FFB61E", "#FFB61E", "#FF4C00", "#FF4C00", "#75878A"],
+      "caption": "Figure 4. Licensing permissiveness — greener is more permissive. The Chinese frontier consolidated on Apache-2.0/MIT; Llama and Gemma stay restricted. Sources: huggingface.co, ai.google.dev/gemma/terms."
+    },
+    {
+      "id": "adoption", "type": "hbar", "after_heading": "Adoption",
+      "title": "OpenRouter cumulative tokens by author", "xlabel": "Trillions of tokens (Nov 2024 – Nov 2025)", "fmt": "{:g}T", "highlight": 0,
+      "labels": ["DeepSeek", "Qwen", "Meta LLaMA", "Mistral", "OpenAI (open)"],
+      "values": [14.37, 5.59, 3.96, 2.92, 1.65],
+      "caption": "Figure 5. Adoption: DeepSeek served more OpenRouter tokens than Qwen, Llama and Mistral combined. Source: OpenRouter State of AI, arxiv.org/abs/2601.10088."
+    },
+    {
+      "id": "inflection", "type": "grouped_bar", "after_heading": "Inflection",
+      "title": "The China-vs-West usage shift", "ylabel": "OpenRouter token share (%)", "legend_loc": "upper center",
+      "groups": ["Early 2025", "Mid 2026"],
+      "series": [
+        {"name": "US-origin", "values": [70, 30]},
+        {"name": "Chinese-origin", "values": [1.2, 46]}
+      ],
+      "caption": "Figure 6. Usage flipped toward China: US-origin OpenRouter token share fell ~70% → ~30% while Chinese-origin rose to ~46% (contested 46–51%). Sources: OpenRouter trackers."
+    }
+  ]
+}

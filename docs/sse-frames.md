@@ -1,4 +1,4 @@
-# qwen8 — Society SSE Frame Contract (FROZEN at M3)
+# 8queens — Society SSE Frame Contract (FROZEN at M3)
 
 This is the authoritative wire contract for the society event stream. It is
 frozen so the frontend (`society.ts` consumer + the `SocietyEvent` discriminated

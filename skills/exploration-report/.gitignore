@@ -1,0 +1,5 @@
+scripts/node_modules/
+scripts/__pycache__/
+**/__pycache__/
+.venv/
+**/_report_figs/

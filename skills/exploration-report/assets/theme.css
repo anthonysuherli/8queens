@@ -1,0 +1,70 @@
+/* Retrofuturistic 中国传统色 docx theme — light & vibrant.
+   html-to-docx renders a CSS subset; colors, fonts, borders, table shading,
+   and alignment all apply. Body pages stay light; the cover image carries the
+   warm-paper + motif richness. */
+
+body {
+  font-family: Calibri, "Inter", Arial, sans-serif;
+  font-size: 11pt;
+  color: #50616D;            /* 墨 slate ink — never pure black */
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: 18pt;
+  font-weight: 700;
+  color: #4C8DAE;            /* 群青 azure */
+  border-bottom: 3px solid #F2BE45;   /* 赤金 gold key-fret rule */
+  padding-bottom: 3pt;
+  margin: 4pt 0 8pt;
+}
+h2 {
+  font-size: 15pt;
+  font-weight: 700;
+  color: #FF4C00;            /* 朱红 vermilion — reserved for section heads */
+  border-bottom: 1.5px solid #F2BE45;
+  padding-bottom: 2pt;
+  margin: 16pt 0 6pt;
+}
+h3 {
+  font-size: 12.5pt;
+  font-weight: 700;
+  color: #4A4266;            /* 黛 ink blue-black */
+  margin: 12pt 0 4pt;
+}
+
+p { margin: 4pt 0; }
+em { color: #75878A; }       /* 苍色 grey-cyan */
+strong { color: #4A4266; }
+a { color: #065279; text-decoration: none; }   /* 靛 deep indigo links */
+hr { border: none; border-top: 1.5px solid #F2BE45; margin: 10pt 0; }
+
+/* lattice (窗格) table discipline */
+table { border-collapse: collapse; width: 100%; font-size: 9.5pt; margin: 8pt 0; }
+th, td {
+  border: 0.5px solid #425066;   /* 黛蓝 hairline lattice */
+  padding: 4pt 6pt;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background-color: #EEDEB0;      /* 牙 ivory header fill */
+  color: #4A4266;
+  font-weight: 700;
+}
+
+/* figure caption */
+.figcap {
+  font-size: 9pt;
+  color: #75878A;
+  font-style: italic;
+}
+
+/* blockquote → callout (朱砂 left accent) */
+blockquote {
+  border-left: 3px solid #FF461F;
+  background-color: #F2ECDE;
+  padding: 6pt 10pt;
+  margin: 8pt 0;
+  color: #50616D;
+}

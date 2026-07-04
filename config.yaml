@@ -1,5 +1,5 @@
 # =============================================================================
-# Qwen8 — tunable runtime config
+# 8queens — tunable runtime config
 #
 # Human-editable knobs for the agent, search/retrieval, and the research
 # pipeline. These are NOT secrets — API keys (and, in the cloud build, Supabase
@@ -8,11 +8,11 @@
 # Precedence (lowest → highest):
 #     built-in defaults  <  this file  <  environment variables
 #
-# Override any value at deploy time with QWEN8_<SECTION>__<FIELD>, e.g.
-#     QWEN8_AGENT__TEMPERATURE=0.4
-#     QWEN8_SEARCH__MIN_SIMILARITY=0.2
+# Override any value at deploy time with QUEENS8_<SECTION>__<FIELD>, e.g.
+#     QUEENS8_AGENT__TEMPERATURE=0.4
+#     QUEENS8_SEARCH__MIN_SIMILARITY=0.2
 #
-# Point at a different file with QWEN8_CONFIG_FILE=/path/to/config.yaml.
+# Point at a different file with QUEENS8_CONFIG_FILE=/path/to/config.yaml.
 # Every value below is optional; delete a key to fall back to its default.
 # =============================================================================
 

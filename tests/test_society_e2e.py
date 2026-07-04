@@ -1,4 +1,4 @@
-"""End-to-end test for qwen8.society.loop — the M5 live criterion (criterion 4).
+"""End-to-end test for queens8.society.loop — the M5 live criterion (criterion 4).
 
 Marked @pytest.mark.live and skipped unless DashScope + Tavily keys are present.
 Runs a real open-domain run_society() and asserts:
@@ -16,9 +16,9 @@ import tempfile
 
 import pytest
 
-from qwen8.core.config import get_config
-from qwen8.store import get_store
-from qwen8.society.loop import bootstrap_society, run_society
+from queens8.core.config import get_config
+from queens8.store import get_store
+from queens8.society.loop import bootstrap_society, run_society
 
 _LIVE = bool(os.environ.get("AI_GATEWAY_API_KEY") and os.environ.get("TAVILY_API_KEY"))
 
@@ -31,10 +31,10 @@ async def test_society_end_to_end_real_question():
     max_rounds and max_llm_calls_per_run.
     """
     d = tempfile.mkdtemp()
-    path = os.path.join(d, "qwen8.db")
-    os.environ["QWEN8_DB_PATH"] = path
+    path = os.path.join(d, "queens8.db")
+    os.environ["QUEENS8_DB_PATH"] = path
     # Clear cached store so env is used
-    from qwen8.store import _local_stores
+    from queens8.store import _local_stores
     _local_stores.clear()
     store = get_store(db_path=path)
     org_id, project_id, kb_id = bootstrap_society(store, project_name="e2e", kb_name="e2e")
