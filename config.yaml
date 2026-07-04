@@ -144,6 +144,8 @@ society:
   max_rounds: 3                      # DEMO default
   max_attempts: 1                    # DEMO default
   spawn_budget: 4                    # global child-gap spawn cap
-  synthesis_top_k_per_gap: 8        # cap findings fed to the Synthesizer
+  synthesis_top_k_per_gap: 16       # cap findings fed to the Synthesizer; at 8 the
+                                    # demo report went granular/off-headline (Synth
+                                    # saw 8 of 100+ findings per gap)
   kg_extraction_enabled: false       # OFF for demo (most qwen-max-hungry)
   max_llm_calls_per_run: 120        # per-run kill-switch (graceful stop)
