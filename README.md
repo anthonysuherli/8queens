@@ -60,6 +60,34 @@ cd frontend && npm install && npm run dev
 Point the dashboard at `http://localhost:8001` (or the ECS public IP) to visualise
 the knowledge graph and findings as the society runs.
 
+## Measured gain over a single-agent baseline
+
+The society is benchmarked against the strongest single-agent baseline available:
+this repo's own exploration pipeline (the same engine a society Researcher runs
+per gap), applied once to the raw topic. Both runs use identical models, tools,
+and an isolated KB each; both KBs are then probed with the same question set.
+One captured run (`qwen-max`/`qwen-plus` + Tavily, topic: *the state of
+open-weight LLMs in 2026*):
+
+| Metric | Single agent | Society |
+|---|---|---|
+| Findings persisted | 133 | 336 |
+| Probe coverage (7 probes) | 6 rich / 1 sparse | **7 rich / 0 sparse** |
+| Mean band-1 hits per probe | 7.7 | 9.0 |
+| Unique source domains | 12 | 5 |
+| LLM calls | 15 | 51 |
+| Wall time | 4m 47s | 9m 30s |
+
+The society closes the coverage gap the single agent leaves (every probe rich,
++17% band-1 depth, 2.5× findings) at 3.4× the LLM calls; the single agent
+retains an edge in source-domain breadth. Full method notes and per-probe data:
+[`docs/baseline-compare.md`](docs/baseline-compare.md) /
+[`.json`](docs/baseline-compare.json). Reproduce with:
+
+```bash
+python -m scripts.baseline_compare "<topic>" out.json
+```
+
 ## Deploy to Alibaba Cloud ECS
 
 ```bash
@@ -73,7 +101,7 @@ curl http://<ECS_PUBLIC_IP>/health   # {"status":"ok","backend":"sqlite"}
 ## Tests
 
 ```bash
-pytest   # 59 tests passing
+pytest   # 77 tests passing
 ```
 
 ## License

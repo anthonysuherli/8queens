@@ -1,0 +1,123 @@
+{
+  "topic": "The state of open-weight LLMs in 2026: who leads on benchmarks, licensing, and adoption?",
+  "probes": [
+    "The state of open-weight LLMs in 2026: who leads on benchmarks, licensing, and adoption?",
+    "Which open-weight LLMs achieved the highest average scores across standardized academic benchmarks (e.g., MMLU, GSM8K, HumanEval, ARC, TruthfulQA) in peer-reviewed or widely cited 2026 evaluations?",
+    "What are the exact license types (e.g., Apache 2.0, MIT, Llama 3 Community License, custom terms) applied to the top five most-downloaded open-weight LLMs released or updated in 2026, and do any impose usage restrictions beyond standard open-source definitions?",
+    "What percentage of production AI applications deployed by Fortune 500 companies in 2026 use at least one open-weight LLM, and which specific models are most frequently named in public technical documentation or case studies?",
+    "Which organization or consortium released the highest-performing open-weight LLM on the 2026 Hugging Face Open LLM Leaderboard (or equivalent authoritative benchmark aggregation), and what is its architecture, parameter count, and training data cutoff date?",
+    "How many distinct open-weight LLMs released in 2026 have been integrated into at least three major open-source inference or orchestration frameworks (e.g., vLLM, Ollama, llama.cpp, Text Generation Inference) as verified by merged pull requests or official model support lists?",
+    "What is the median time from initial public release to first stable version (v1.0 or equivalent) for open-weight LLMs launched in 2026, calculated from GitHub release dates or official model card publication dates?"
+  ],
+  "config": {
+    "n_researchers": 2,
+    "max_rounds": 3,
+    "max_llm_calls_per_run": 120
+  },
+  "single": {
+    "kb": "single-the-state-of-open-weight-llms-in-2026-wh",
+    "findings": 133,
+    "distinct_titles": 133,
+    "unique_domains": 12,
+    "llm_calls": 15,
+    "wall_seconds": 286.53756729199085,
+    "coverage": {
+      "rich": 6,
+      "sparse": 1,
+      "gap": 0,
+      "mean_band1_hits": 7.714285714285714
+    },
+    "coverage_per_probe": [
+      {
+        "question": "The state of open-weight LLMs in 2026: who leads on benchmarks, licensing, and adoption?",
+        "coverage": "rich",
+        "band1_hits": 7
+      },
+      {
+        "question": "Which open-weight LLMs achieved the highest average scores across standardized academic benchmarks (e.g., MMLU, GSM8K, HumanEval, ARC, TruthfulQA) in peer-reviewed or widely cited 2026 evaluations?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "What are the exact license types (e.g., Apache 2.0, MIT, Llama 3 Community License, custom terms) applied to the top five most-downloaded open-weight LLMs released or updated in 2026, and do any impose usage restrictions beyond standard open-source definitions?",
+        "coverage": "rich",
+        "band1_hits": 7
+      },
+      {
+        "question": "What percentage of production AI applications deployed by Fortune 500 companies in 2026 use at least one open-weight LLM, and which specific models are most frequently named in public technical documentation or case studies?",
+        "coverage": "sparse",
+        "band1_hits": 1
+      },
+      {
+        "question": "Which organization or consortium released the highest-performing open-weight LLM on the 2026 Hugging Face Open LLM Leaderboard (or equivalent authoritative benchmark aggregation), and what is its architecture, parameter count, and training data cutoff date?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "How many distinct open-weight LLMs released in 2026 have been integrated into at least three major open-source inference or orchestration frameworks (e.g., vLLM, Ollama, llama.cpp, Text Generation Inference) as verified by merged pull requests or official model support lists?",
+        "coverage": "rich",
+        "band1_hits": 9
+      },
+      {
+        "question": "What is the median time from initial public release to first stable version (v1.0 or equivalent) for open-weight LLMs launched in 2026, calculated from GitHub release dates or official model card publication dates?",
+        "coverage": "rich",
+        "band1_hits": 10
+      }
+    ]
+  },
+  "society": {
+    "kb": "society-the-state-of-open-weight-llms-in-2026-wh",
+    "findings": 336,
+    "distinct_titles": 336,
+    "unique_domains": 5,
+    "llm_calls": 51,
+    "wall_seconds": 570.3241319169756,
+    "coverage": {
+      "rich": 7,
+      "sparse": 0,
+      "gap": 0,
+      "mean_band1_hits": 9.0
+    },
+    "coverage_per_probe": [
+      {
+        "question": "The state of open-weight LLMs in 2026: who leads on benchmarks, licensing, and adoption?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "Which open-weight LLMs achieved the highest average scores across standardized academic benchmarks (e.g., MMLU, GSM8K, HumanEval, ARC, TruthfulQA) in peer-reviewed or widely cited 2026 evaluations?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "What are the exact license types (e.g., Apache 2.0, MIT, Llama 3 Community License, custom terms) applied to the top five most-downloaded open-weight LLMs released or updated in 2026, and do any impose usage restrictions beyond standard open-source definitions?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "What percentage of production AI applications deployed by Fortune 500 companies in 2026 use at least one open-weight LLM, and which specific models are most frequently named in public technical documentation or case studies?",
+        "coverage": "rich",
+        "band1_hits": 3
+      },
+      {
+        "question": "Which organization or consortium released the highest-performing open-weight LLM on the 2026 Hugging Face Open LLM Leaderboard (or equivalent authoritative benchmark aggregation), and what is its architecture, parameter count, and training data cutoff date?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "How many distinct open-weight LLMs released in 2026 have been integrated into at least three major open-source inference or orchestration frameworks (e.g., vLLM, Ollama, llama.cpp, Text Generation Inference) as verified by merged pull requests or official model support lists?",
+        "coverage": "rich",
+        "band1_hits": 10
+      },
+      {
+        "question": "What is the median time from initial public release to first stable version (v1.0 or equivalent) for open-weight LLMs launched in 2026, calculated from GitHub release dates or official model card publication dates?",
+        "coverage": "rich",
+        "band1_hits": 10
+      }
+    ],
+    "rounds": 1,
+    "gaps_done": 4,
+    "gaps_dead": 0,
+    "report": "In 2026, the landscape of open-weight large language models (LLMs) is characterized by a diverse array of models with varying architectures, licensing, and adoption. Notable models include Qwen3-235B-A22B from Alibaba, which boasts 235B total parameters and 22B active per token, and is licensed under Apache 2.0 (finding_id: 05d34304f42941cebecc354650192113). OpenAI has also released gpt-oss-20b and gpt-oss-120b, both under Apache 2.0, with memory requirements of 16 GB and 80 GB, respectively (finding_id: 5d36159cfa6245b1942f68b328ec6849). Google's Gemma 4 12B Unified, another Apache 2.0 model, features an encoder-free multimodal architecture and has achieved strong performance on benchmarks such as AIME_2026 (77.5) and MMLU_Pro (77.2) (finding_id: 0a0fef2b9fc04c3c978c34dd0156e5a1). Mistral Medium 3.5 128B, released under a Modified MIT license with a revenue cap, unifies reasoning, instruct, and coding capabilities (finding_id: 8332757e3c694e44bf07932645ed4b42). WebWorld-8B/14B/32B, developed by the Qwen Team, claims to outperform GPT-4o in factuality (finding_id: 81ecc34ca38d4ed287c5f8f7de7201cf). Covenant-72B, a pre-trained model via a permissionless P2P network, has shown competitive benchmark performance, including 56.8 on ARC_Challenge (finding_id: 0dfeb7f527df41a49bc126777ebfafe4). JetBrains' Mellum 2 12B-A2.5B, a MoE code model, has been trained using RLVR and is designed for IDE-resident inference (finding_id: 4f48f097215048958e1b59ad31ce5402). Sapient Intelligence's HRM-Text-1B, a Hierarchical Reasoning Model, is the first of its kind with a dual-timescale recurrent architecture (finding_id: 76211d80f2434842a7aa598a91850088). In terms of benchmarks, Medmarks-V, a verifiable subset of Medmarks, has seen Gemini 3 Pro Preview as the top performer with a win rate of 0.6628 (finding_id: 41fec2186b984700aafa2056e9c0c40d). The financial services industry, in particular, has seen significant AI adoption, with 65% of firms actively using AI, and 84% considering open-source models central to their strategy (finding_id: 6c8473b5feea494a94d2a2bdd875b00a, finding_id: c1fd2b50d9ff427f9a1602a9fe0477e4). Despite being 90% cheaper, open-source models account for less than 30% of the market share (finding_id: 0c10b4dff2914ec3a6d5cfc8c667ffb0)."
+  }
+}
