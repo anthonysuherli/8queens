@@ -5,7 +5,8 @@ COPY pyproject.toml ./
 COPY queens8 ./queens8
 COPY config.yaml ./
 RUN pip install --no-cache-dir '.[local]'
-ENV QUEENS8_DB_PATH=/data/queens8.db
+# Must contain ".queens8" — the api.main startup assertion rejects any other path.
+ENV QUEENS8_DB_PATH=/data/.queens8.db
 VOLUME /data
 EXPOSE 8001
 # api/main.main() binds 127.0.0.1 — the uvicorn CLI overrides host to 0.0.0.0:

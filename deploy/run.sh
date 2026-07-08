@@ -42,7 +42,7 @@ docker run -d --name queens8 -p 80:8001 -v /data:/data \\
   -e AI_GATEWAY_API_KEY="${DASHSCOPE_API_KEY}" \\
   -e AI_GATEWAY_BASE_URL="${GATEWAY_BASE_URL}" \\
   -e TAVILY_API_KEY="${TAVILY_API_KEY}" \\
-  -e QUEENS8_DB_PATH=/data/queens8.db \\
+  -e QUEENS8_DB_PATH=/data/.queens8.db \\
   -e QUEENS8_SOCIETY_SECRET="${QUEENS8_SOCIETY_SECRET}" \\
   -e QUEENS8_CORS_ORIGINS="${CORS_ORIGINS}" \\
   "${IMAGE}"
